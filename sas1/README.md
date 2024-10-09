@@ -26,4 +26,10 @@ Indeed, SAS notebooks (https://sassoftware.github.io/vscode-sas-extension/Featur
 
 ## Installation
 
-You can clone this repository and run the available notebooks in your environment.
+You can clone the ```sas-education``` repository using the command-line:
+
+```
+git clone https://github.com/sassoftware/sas-education.git
+```
+
+Then, you can access the available notebooks from this course in the ```sas1``` sub-folder and run them in your environment.
