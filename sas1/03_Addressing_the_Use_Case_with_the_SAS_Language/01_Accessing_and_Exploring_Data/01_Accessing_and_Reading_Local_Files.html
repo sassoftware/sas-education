@@ -170,6 +170,23 @@
 <span class="sas-syntax-macro-keyword">%let</span> path<span class="sas-syntax-sep">=</span><span class="sas-syntax-sep">&</span>WORKSPACE_PATH<span class="sas-syntax-sep">/</span>sas<span class="sas-syntax-sep">-</span>education<span class="sas-syntax-sep">/</span>sas1 <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
 </div>
+<div class="cell-output">
+<div class="log-line sas-log-source">58   /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">59   title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">60   ods graphics on;</div>
+<div class="log-line sas-log-source">61   ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml4.htm</div>
+<div class="log-line sas-log-source">62   %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">62 ! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">62 ! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">63   /* Automatic macro-variable pointing to your storage mount path */</div>
+<div class="log-line sas-log-source">64   %put &=WORKSPACE_PATH ;</div>
+<div class="log-line sas-log-normal">WORKSPACE_PATH=/workspaces/churnproject</div>
+<div class="log-line sas-log-source">65   %let path=&WORKSPACE_PATH/sas-education/sas1 ;</div>
+<div class="log-line sas-log-source">66   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">67   </div>
+<div class="log-line sas-log-note"></div>
+</div>
 
 <div class="markdown-cell">
 <h2>Read the CSV file</h2>
@@ -180,6 +197,76 @@
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
 </div>
+<div class="cell-output">
+<div class="log-line sas-log-title">5                                                          The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">68   /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">69   title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">70   ods graphics on;</div>
+<div class="log-line sas-log-source">71   ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml5.htm</div>
+<div class="log-line sas-log-source">72   %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">72 ! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">72 ! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">73   proc import file="&path/data/input/subscriptions.csv" out=subscriptions dbms=csv replace ;</div>
+<div class="log-line sas-log-source">74   run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">75    /**********************************************************************</div>
+<div class="log-line sas-log-source">76    *   PRODUCT:   SAS</div>
+<div class="log-line sas-log-source">77    *   VERSION:   V.04.00</div>
+<div class="log-line sas-log-source">78    *   CREATOR:   External File Interface</div>
+<div class="log-line sas-log-source">79    *   DATE:      03OCT25</div>
+<div class="log-line sas-log-source">80    *   DESC:      Generated SAS Datastep Code</div>
+<div class="log-line sas-log-source">81    *   TEMPLATE SOURCE:  (None Specified.)</div>
+<div class="log-line sas-log-source">82    ***********************************************************************/</div>
+<div class="log-line sas-log-source">83       data WORK.SUBSCRIPTIONS    ;</div>
+<div class="log-line sas-log-source">84       %let _EFIERR_ = 0; /* set the ERROR detection macro variable */</div>
+<div class="log-line sas-log-source">85       infile '/workspaces/churnproject/sas-education/sas1/data/input/subscriptions.csv' delimiter = ',' MISSOVER DSD lrecl=32767</div>
+<div class="log-line sas-log-source">85 ! firstobs=2 ;</div>
+<div class="log-line sas-log-source">86          informat customerSubscrCode best32. ;</div>
+<div class="log-line sas-log-source">87          informat customerSubscrStat $8. ;</div>
+<div class="log-line sas-log-source">88          format customerSubscrCode best12. ;</div>
+<div class="log-line sas-log-source">89          format customerSubscrStat $8. ;</div>
+<div class="log-line sas-log-source">90       input</div>
+<div class="log-line sas-log-source">91                   customerSubscrCode</div>
+<div class="log-line sas-log-source">92                   customerSubscrStat  $</div>
+<div class="log-line sas-log-source">93       ;</div>
+<div class="log-line sas-log-source">94       if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */</div>
+<div class="log-line sas-log-source">95       run;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: The infile '/workspaces/churnproject/sas-education/sas1/data/input/subscriptions.csv' is:</div>
+<div class="log-line sas-log-note">      Filename=/workspaces/churnproject/sas-education/sas1/data/input/subscriptions.csv,</div>
+<div class="log-line sas-log-note">      Owner Name=sas,Group Name=sas,</div>
+<div class="log-line sas-log-note">      Access Permission=-rw-rw-r--,</div>
+<div class="log-line sas-log-note">      Last Modified=03Oct2025:15:23:48,</div>
+<div class="log-line sas-log-note">      File Size (bytes)=65</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: 3 records were read from the infile '/workspaces/churnproject/sas-education/sas1/data/input/subscriptions.csv'.</div>
+<div class="log-line sas-log-note">      The minimum record length was 6.</div>
+<div class="log-line sas-log-note">      The maximum record length was 10.</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.SUBSCRIPTIONS has 3 observations and 2 variables.</div>
+<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-normal">3 rows created in WORK.SUBSCRIPTIONS from /workspaces/churnproject/sas-education/sas1/data/input/subscriptions.csv.</div>
+<div class="log-line sas-log-normal">  </div>
+<div class="log-line sas-log-normal">  </div>
+<div class="log-line sas-log-normal">  </div>
+<div class="log-line sas-log-note">NOTE: WORK.SUBSCRIPTIONS data set was successfully created.</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.SUBSCRIPTIONS has 3 observations and 2 variables.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE IMPORT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.02 seconds</div>
+<div class="log-line sas-log-title">6                                                          The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note">      cpu time            0.03 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">96   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">97   </div>
+<div class="log-line sas-log-note"></div>
+</div>
 
 <div class="markdown-cell">
 <h2>Describe the new table</h2>
@@ -189,6 +276,27 @@
 <pre><code class="hljs"><span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">contents</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>subscriptions <span class="sas-syntax-keyword">varnum</span> <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">98   /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">99   title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">100  ods graphics on;</div>
+<div class="log-line sas-log-source">101  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml6.htm</div>
+<div class="log-line sas-log-source">102  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">102! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">102! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">103  proc contents data=subscriptions varnum ;</div>
+<div class="log-line sas-log-source">104  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE CONTENTS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.03 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.03 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">105  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">106  </div>
+<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -1533,6 +1641,30 @@ a:visited { color: #800080 }
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
+<div class="log-line sas-log-source">117  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">118  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">119  ods graphics on;</div>
+<div class="log-line sas-log-source">120  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml8.htm</div>
+<div class="log-line sas-log-source">121  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">121! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">121! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">122  proc print data=subscriptions ;</div>
+<div class="log-line sas-log-source">123  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 3 observations read from the data set WORK.SUBSCRIPTIONS.</div>
+<div class="log-line sas-log-title">7                                                          The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">124  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">125  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -2726,6 +2858,32 @@ a:visited { color: #800080 }
 <span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">datasets</span> <span class="sas-syntax-keyword">lib</span><span class="sas-syntax-sep">=</span>rev <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">quit</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">126  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">127  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">128  ods graphics on;</div>
+<div class="log-line sas-log-source">129  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml9.htm</div>
+<div class="log-line sas-log-source">130  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">130! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">130! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">131  libname rev json "&path/data/input/reviews.json" ;</div>
+<div class="log-line sas-log-note">NOTE: JSON data is only read once.  To read the JSON again, reassign the JSON LIBNAME.</div>
+<div class="log-line sas-log-note">NOTE: Libref REV was successfully assigned as follows: </div>
+<div class="log-line sas-log-note">      Engine:        JSON </div>
+<div class="log-line sas-log-note">      Physical Name: /workspaces/churnproject/sas-education/sas1/data/input/reviews.json</div>
+<div class="log-line sas-log-source">132  proc datasets lib=rev ;</div>
+<div class="log-line sas-log-source">133  quit ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE DATASETS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">134  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">135  </div>
+<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -3943,6 +4101,27 @@ a:visited { color: #800080 }
 <pre><code class="hljs"><span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">contents</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>rev.reviews <span class="sas-syntax-keyword">varnum</span> <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">136  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">137  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">138  ods graphics on;</div>
+<div class="log-line sas-log-source">139  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml10.htm</div>
+<div class="log-line sas-log-source">140  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">140! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">140! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">141  proc contents data=rev.reviews varnum ;</div>
+<div class="log-line sas-log-source">142  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE CONTENTS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">143  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">144  </div>
+<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -5230,6 +5409,31 @@ a:visited { color: #800080 }
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
+<div class="log-line sas-log-source">145  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">146  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">147  ods graphics on;</div>
+<div class="log-line sas-log-source">148  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml11.htm</div>
+<div class="log-line sas-log-source">149  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">149! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-title">8                                                          The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">149! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">150  proc print data=rev.reviews(obs=10) ;</div>
+<div class="log-line sas-log-source">151  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: Access by observation number not available. Observation numbers will be counted by PROC PRINT.</div>
+<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set REV.REVIEWS.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">152  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">153  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -6493,6 +6697,31 @@ a:visited { color: #800080 }
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
+<div class="log-line sas-log-source">154  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">155  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">156  ods graphics on;</div>
+<div class="log-line sas-log-source">157  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml12.htm</div>
+<div class="log-line sas-log-source">158  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">158! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">158! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">159  libname tcs "&path/data/input" ;</div>
+<div class="log-line sas-log-note">NOTE: Libref TCS was successfully assigned as follows: </div>
+<div class="log-line sas-log-note">      Engine:        V9 </div>
+<div class="log-line sas-log-note">      Physical Name: /workspaces/churnproject/sas-education/sas1/data/input</div>
+<div class="log-line sas-log-source">160  proc datasets lib=tcs ;</div>
+<div class="log-line sas-log-source">161  quit ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE DATASETS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.02 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.03 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">162  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">163  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -7727,6 +7956,27 @@ a:visited { color: #800080 }
 <pre><code class="hljs"><span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">contents</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>tcs.techsupportevals <span class="sas-syntax-keyword">varnum</span> <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">164  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">165  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">166  ods graphics on;</div>
+<div class="log-line sas-log-source">167  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml13.htm</div>
+<div class="log-line sas-log-source">168  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">168! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">168! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">169  proc contents data=tcs.techsupportevals varnum ;</div>
+<div class="log-line sas-log-source">170  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE CONTENTS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">171  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">172  </div>
+<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -9071,6 +9321,30 @@ a:visited { color: #800080 }
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
+<div class="log-line sas-log-source">173  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">174  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-title">9                                                          The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">175  ods graphics on;</div>
+<div class="log-line sas-log-source">176  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml14.htm</div>
+<div class="log-line sas-log-source">177  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">177! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">177! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">178  proc print data=tcs.techsupportevals(obs=10) ;</div>
+<div class="log-line sas-log-source">179  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set TCS.TECHSUPPORTEVALS.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.00 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">180  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">181  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -10299,6 +10573,28 @@ a:visited { color: #800080 }
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
+<div class="log-line sas-log-source">182  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">183  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">184  ods graphics on;</div>
+<div class="log-line sas-log-source">185  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml15.htm</div>
+<div class="log-line sas-log-source">186  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">186! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">186! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">187  proc means data=tcs.techsupportevals ;</div>
+<div class="log-line sas-log-source">188  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set TCS.TECHSUPPORTEVALS.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE MEANS used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.02 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">189  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">190  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -11520,6 +11816,31 @@ a:visited { color: #800080 }
     <span class="sas-syntax-keyword">tables</span> techsupporteval <span class="sas-syntax-sep">/</span> <span class="sas-syntax-keyword">plots</span><span class="sas-syntax-sep">=</span>freqplot<span class="sas-syntax-sep">(</span><span class="sas-syntax-sep">)</span> <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">191  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">192  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">193  ods graphics on;</div>
+<div class="log-line sas-log-source">194  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml16.htm</div>
+<div class="log-line sas-log-source">195  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">195! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/01_Accessing_and_E</div>
+<div class="log-line sas-log-source">195! xploring_Data/01_Accessing_and_Reading_Local_Files.sasnb));</div>
+<div class="log-line sas-log-source">196  proc freq data=tcs.techsupportevals ;</div>
+<div class="log-line sas-log-source">197      tables techsupporteval / plots=freqplot() ;</div>
+<div class="log-line sas-log-source">198  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set TCS.TECHSUPPORTEVALS.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE FREQ used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           2.57 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.07 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">199  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">200  </div>
+<div class="log-line sas-log-title">10                                                         The SAS System                       Friday, October  3, 2025 03:25:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
