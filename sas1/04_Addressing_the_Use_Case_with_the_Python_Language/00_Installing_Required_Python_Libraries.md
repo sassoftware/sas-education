@@ -8,10 +8,10 @@ To install the Python libraries required for this project, follow these instruct
 
 ![](images/franir_2024-10-03-10-46-58.png)
 
-- Run the following commands
+- Run the following commands (assuming you cloned the `sas-education` repository at the root of your Workbench mount folder)
 
 ```shell
-cd <path-to-sas-education-cloned-folder>/sas1
+cd $WORKSPACE/sas-education/sas1
 pip install -r python/requirements.txt
 ```
 
