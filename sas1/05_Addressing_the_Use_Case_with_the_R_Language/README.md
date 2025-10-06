@@ -1,4 +1,4 @@
-# Addressing the Use Case with the Python Language
+# Addressing the Use Case with the R Language
 
 ## Agenda
 
