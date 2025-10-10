@@ -1,0 +1,4170 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+      }
+      .markdown-cell table td,
+      .markdown-cell table th {
+        border: 1px solid var(--border-color);
+      }
+      .markdown-cell code {
+        padding: 0 .4em;
+        border-radius: 4px;
+        background-color: var(--highlight-background-color);
+      }
+      .code-cell {
+        position: relative;
+        font-size: 14px;
+      }
+      .code-cell pre code {
+        font-family: Consolas, monospace;
+      }
+      pre code.hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 1em;
+        border: 1px solid var(--border-color);
+      }
+      .code-cell .languageId {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        text-transform: uppercase;
+        padding: .1em .5em;
+        background-color: var(--highlight-background-color);
+      }
+      .log-line {
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        white-space: pre-wrap;
+        margin-inline-start: 1em;
+      }
+      body {
+  color: #3b3b3b;
+  --border-color: #b0b7bb;
+  --highlight-background-color: #818b981f;
+}
+.hljs {
+  background: #fff;
+}
+
+/* Syntax highlighting */
+.hljs-operator,
+.hljs-punctuation {
+  color: #1b1d22;
+}
+
+.hljs-keyword {
+  color: #3578c5;
+}
+
+.hljs-comment {
+  color: #647f29;
+}
+
+.hljs-string {
+  color: #8f4238;
+}
+
+.hljs-number {
+  color: #3c8275;
+}
+
+.hljs-title {
+  color: #224c7c;
+  font-weight: bold;
+}
+
+.hljs-built_in {
+  color: #aa0d91;
+}
+
+/* SAS Syntax */
+.sas-syntax-sep {
+  color: #1b1d22;
+}
+
+.sas-syntax-keyword,
+.sas-syntax-macro-keyword {
+  color: #3578c5;
+}
+
+.sas-syntax-sec-keyword,
+.sas-syntax-proc-name {
+  color: #224c7c;
+  font-weight: bold;
+}
+
+.sas-syntax-comment,
+.sas-syntax-macro-comment {
+  color: #647f29;
+}
+
+.sas-syntax-macro-ref,
+.sas-syntax-macro-sec-keyword {
+  color: #1b1d22;
+  font-weight: bold;
+}
+
+.sas-syntax-cards-data {
+  color: #ad6531;
+}
+
+.sas-syntax-string {
+  color: #8f4238;
+}
+
+.sas-syntax-date,
+.sas-syntax-time,
+.sas-syntax-dt,
+.sas-syntax-bitmask {
+  color: #3c8275;
+  font-weight: bold;
+}
+
+.sas-syntax-namelit {
+  color: #8f4238;
+  font-weight: bold;
+}
+
+.sas-syntax-hex,
+.sas-syntax-numeric {
+  color: #3c8275;
+  font-weight: bold;
+}
+
+.sas-syntax-format {
+  color: #3c8275;
+}
+
+.log-line.sas-log-error {
+  color: #ff0000;
+}
+
+.log-line.sas-log-warning {
+  color: #8f5f00;
+}
+
+.log-line.sas-log-note {
+  color: #0000ff;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="markdown-cell">
+<h1>Deploying the Model</h1>
+<p>The training and test tables as well as the models&#39; scoring materials have been built in previous steps.</p>
+<p>In case you have not followed previous steps, you need, at least, to run the following SAS notebook:</p>
+<p><strong>sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/03_Machine_Learning/03_Developing_a_Model.sasnb</strong></p>
+
+</div>
+<div class="markdown-cell">
+<h2>Proc logselect - built the model - created the score code</h2>
+<p>The score code was created in previous steps using this type of code:</p>
+<pre><code class="language-sas">proc logselect data=work.customer_churn_ml_train_final;
+    class &amp;char_vars &amp;target;
+    model &amp;target(event=&#39;1&#39;)=&amp;char_vars &amp;num_vars;
+    /* Specify variable selection technique*/
+    selection method=elasticnet;
+    /* Generate score code */
+    code file=&quot;&amp;path/code/logscore.sas&quot;;
+run;
+</code></pre>
+
+</div>
+<div class="markdown-cell">
+<h2>Score a data set using the score code from the logistic regression model</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-keyword">title2</span> <span class="sas-syntax-string">'Score data with a %include statement referencing SAS Data Step code from proc logselect'</span><span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">data</span> log_scored <span class="sas-syntax-sep">;</span>
+   <span class="sas-syntax-keyword">set</span> churn.customer_churn_ml_test_final<span class="sas-syntax-sep">;</span>
+   <span class="sas-syntax-macro-ref">%include</span> <span class="sas-syntax-string">"&path/code/logscore.sas"</span><span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span><span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">2442  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">2443  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">2444  ods graphics on;</div>
+<div class="log-line sas-log-source">2445  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml112.htm</div>
+<div class="log-line sas-log-source">2446  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">2446! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
+<div class="log-line sas-log-source">2446! g_the_Model/01_Deploying_the_Model.sasnb));</div>
+<div class="log-line sas-log-source">2447  title2 'Score data with a %include statement referencing SAS Data Step code from proc logselect';</div>
+<div class="log-line sas-log-source">2448  data log_scored ;</div>
+<div class="log-line sas-log-source">2449     set churn.customer_churn_ml_test_final;</div>
+<div class="log-line sas-log-source">2450     %include "&path/code/logscore.sas";</div>
+<div class="log-line sas-log-source">2606  run;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set CHURN.CUSTOMER_CHURN_ML_TEST_FINAL.</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.LOG_SCORED has 1499 observations and 32 variables.</div>
+<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2607  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">2608  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Print a few observations with the scores</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">sort</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>log_scored <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">by</span> <span class="sas-syntax-keyword">descending</span> P_LostCustomer <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">print</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>log_scored <span class="sas-syntax-sep">(</span><span class="sas-syntax-keyword">obs</span><span class="sas-syntax-sep">=</span><span class="sas-syntax-numeric">10</span><span class="sas-syntax-sep">)</span> <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">var</span> ID customerGender customerSubscrStat DemHomeOwner I_LostCustomer P_LostCustomer <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">2609  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">2610  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">2611  ods graphics on;</div>
+<div class="log-line sas-log-source">2612  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml113.htm</div>
+<div class="log-line sas-log-source">2613  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">2613! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
+<div class="log-line sas-log-source">2613! g_the_Model/01_Deploying_the_Model.sasnb));</div>
+<div class="log-line sas-log-source">2614  proc sort data=log_scored ;</div>
+<div class="log-line sas-log-source">2615      by descending P_LostCustomer ;</div>
+<div class="log-line sas-log-source">2616  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set WORK.LOG_SCORED.</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.LOG_SCORED has 1499 observations and 32 variables.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE SORT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.00 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2617  proc print data=log_scored (obs=10) ;</div>
+<div class="log-line sas-log-source">2618      var ID customerGender customerSubscrStat DemHomeOwner I_LostCustomer P_LostCustomer ;</div>
+<div class="log-line sas-log-source">2619  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set WORK.LOG_SCORED.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-title">83                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2620  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">2621  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
+<style>
+/*<![CDATA[*/
+.body.c > table, .body.c > pre, .body.c div > table,
+.body.c div > pre, .body.c > table, .body.c > pre,
+.body.j > table, .body.j > pre, .body.j div > table,
+.body.j div > pre, .body.j > table, .body.j > pre,
+.body.c p.note, .body.c p.warning, .body.c p.error, .body.c p.fatal,
+.body.j p.note, .body.j p.warning, .body.j p.error, .body.j p.fatal,
+.body.c > table.layoutcontainer, .body.j > table.layoutcontainer { margin-left: auto; margin-right: auto }
+.layoutregion.l table, .layoutregion.l pre, .layoutregion.l p.note,
+.layoutregion.l p.warning, .layoutregion.l p.error, .layoutregion.l p.fatal { margin-left: 0 }
+.layoutregion.c table, .layoutregion.c pre, .layoutregion.c p.note,
+.layoutregion.c p.warning, .layoutregion.c p.error, .layoutregion.c p.fatal { margin-left: auto; margin-right: auto }
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r p.warning, .layoutregion.r p.error, .layoutregion.r p.fatal { margin-right: 0 }
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block }
+html{ font-size: 100% }
+.body { margin: 1em; font-size: 13px; line-height: 1.231 }
+sup { position: relative; vertical-align: baseline; bottom: 0.25em; font-size: 0.8em }
+sub { position: relative; vertical-align: baseline; top: 0.25em; font-size: 0.8em }
+ul, ol { margin: 1em 0; padding: 0 0 0 40px }
+dd { margin: 0 0 0 40px }
+nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0 }
+img { border: 0; vertical-align: middle }
+svg:not(:root) { overflow: hidden }
+figure { margin: 0 }
+table { border-collapse: collapse; border-spacing: 0 }
+.layoutcontainer { border-collapse: separate; border-spacing: 0 }
+p { margin-top: 0; text-align: left }
+h1.heading1 { text-align: left }
+h2.heading2 { text-align: left }
+h3.heading3 { text-align: left }
+h4.heading4 { text-align: left }
+h5.heading5 { text-align: left }
+h6.heading6 { text-align: left }
+span { text-align: left }
+table { margin-bottom: 1em }
+td, th { text-align: left; padding: 3px 6px; vertical-align: top }
+td[class$="fixed"], th[class$="fixed"] { white-space: pre }
+section, article { padding-top: 1px; padding-bottom: 8px }
+hr.pagebreak { height: 0px; border: 0; border-bottom: 1px solid #c0c0c0; margin: 1em 0 }
+.stacked-value { text-align: left; display: block }
+.stacked-cell > .stacked-value, td.data > td.data, th.data > td.data, th.data > th.data, td.data > th.data, th.header > th.header { border: 0 }
+.stacked-cell > div.data { border-width: 0 }
+.systitleandfootercontainer { white-space: nowrap; margin-bottom: 1em }
+.systitleandfootercontainer > p { margin: 0 }
+.systitleandfootercontainer > p > span { display: inline-block; width: 100%; white-space: normal }
+.batch { display: table }
+.toc { display: none }
+.proc_note_group, .proc_title_group { margin-bottom: 1em }
+p.proctitle { margin: 0 }
+p.note, p.warning, p.error, p.fatal { display: table }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner,
+.notecontent, .warncontent, .errorcontent, .fatalcontent { display: table-cell; padding: 0.5em }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner { padding-right: 0 }
+.body > div > ol li { text-align: left }
+.beforecaption > h4 { margin-top: 0; margin-bottom: 0 }
+.c { text-align: center }
+.r { text-align: right }
+.l { text-align: left }
+.j { text-align: justify }
+.d { text-align: right }
+.b { vertical-align: bottom }
+.m { vertical-align: middle }
+.t { vertical-align: top }
+.accessiblecaption {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+a:active { color: #800080 }
+.aftercaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    padding-top: 4pt;
+}
+.batch > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.batch > tbody, .batch > thead, .batch > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.batch { border: hidden; }
+.batch {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'SAS Monospace', 'Courier New', Courier, monospace;
+    font-size: 7pt;
+    font-style: normal;
+    font-weight: normal;
+    padding: 7px;
+    }
+.beforecaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.body {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.bodydate {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: right;
+    vertical-align: top;
+    width: 100%;
+}
+.bycontentfolder {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.byline {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.bylinecontainer > col, .bylinecontainer > colgroup > col, .bylinecontainer > colgroup, .bylinecontainer > tr, .bylinecontainer > * > tr, .bylinecontainer > thead, .bylinecontainer > tbody, .bylinecontainer > tfoot { border: none; }
+.bylinecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.caption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.cell, .container {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.contentfolder, .contentitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.contentproclabel, .contentprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.contents {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.contentsdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.contenttitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.continued {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    width: 100%;
+}
+.data, .dataemphasis {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.dataemphasisfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.dataempty {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datafixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datastrong {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.datastrongfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.date {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.document {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.errorcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.extendedpage {
+    background-color: #fafbfe;
+    border-style: solid;
+    border-width: 1pt;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+    text-align: center;
+}
+.fatalbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.fatalcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.fatalcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.folderaction {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.footer {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footeremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footeremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.footerstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.frame {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.graph > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.graph > tbody, .graph > thead, .graph > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.graph { border: hidden; }
+.graph {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.header {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headeremphasis {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headeremphasisfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.headersandfooters {
+    background-color: #edf2f9;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrong {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrongfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading1 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 24pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 18pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading3 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 14pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading4 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading5 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 10pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading6 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.index {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.indexaction, .indexitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.indexprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.indextitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.layoutcontainer, .layoutregion {
+    border-width: 0;
+    border-spacing: 30px;
+}
+.linecontent {
+    background-color: #fafbfe;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:link { color: #0000ff }
+.list {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.list10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.list2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.list3, .list4, .list5, .list6, .list7, .list8, .list9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.listitem10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.listitem3, .listitem4, .listitem5, .listitem6, .listitem7, .listitem8, .listitem9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.note {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notebanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.notecontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notecontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.output > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.output > tbody, .output > thead, .output > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.output { border: hidden; }
+.output {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.pageno {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    text-align: right;
+    vertical-align: top;
+}
+.pages {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.pagesdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.pagesitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.pagesproclabel, .pagesprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.pagestitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.paragraph {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.parskip > col, .parskip > colgroup > col, .parskip > colgroup, .parskip > tr, .parskip > * > tr, .parskip > thead, .parskip > tbody, .parskip > tfoot { border: none; }
+.parskip {
+    border: none;
+    border-spacing: 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    }
+.prepage {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+}
+.proctitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.proctitlefixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooter {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooteremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooteremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooterempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowfooterstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheader {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderemphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderemphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowheaderstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systemfooter, .systemfooter10, .systemfooter2, .systemfooter3, .systemfooter4, .systemfooter5, .systemfooter6, .systemfooter7, .systemfooter8, .systemfooter9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.systemtitle, .systemtitle10, .systemtitle2, .systemtitle3, .systemtitle4, .systemtitle5, .systemtitle6, .systemtitle7, .systemtitle8, .systemtitle9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systitleandfootercontainer > col, .systitleandfootercontainer > colgroup > col, .systitleandfootercontainer > colgroup, .systitleandfootercontainer > tr, .systitleandfootercontainer > * > tr, .systitleandfootercontainer > thead, .systitleandfootercontainer > tbody, .systitleandfootercontainer > tfoot { border: none; }
+.systitleandfootercontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.table > col, .table > colgroup > col {
+    border-left: 1px solid #c1c1c1;
+    border-right: 0 solid #c1c1c1;
+}
+.table > tr, .table > * > tr {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 0 solid #c1c1c1;
+}
+.table { border: hidden; }
+.table {
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+.titleandnotecontainer > col, .titleandnotecontainer > colgroup > col, .titleandnotecontainer > colgroup, .titleandnotecontainer > tr, .titleandnotecontainer > * > tr, .titleandnotecontainer > thead, .titleandnotecontainer > tbody, .titleandnotecontainer > tfoot { border: none; }
+.titleandnotecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.titlesandfooters {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.usertext {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:visited { color: #800080 }
+.warnbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.warncontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.warncontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+/*]]>*/
+</style>
+<div class="c body">
+<div style="padding-bottom: 8px; padding-top: 1px">
+<div id="IDX" style="padding-bottom: 8px; padding-top: 1px">
+<table class="table" style="border-spacing: 0" aria-label="Data Set WORK.LOG_SCORED">
+<caption aria-label="Data Set WORK.LOG_SCORED"></caption>
+<colgroup><col/></colgroup><colgroup><col/><col/><col/><col/><col/><col/></colgroup>
+<thead>
+<tr>
+<th class="r header" scope="col">Obs</th>
+<th class="r header" scope="col">ID</th>
+<th class="header" scope="col">customerGender</th>
+<th class="header" scope="col">customerSubscrStat</th>
+<th class="header" scope="col">DemHomeOwner</th>
+<th class="header" scope="col">I_LostCustomer</th>
+<th class="r header" scope="col">P_LostCustomer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="r rowheader" scope="row">1</th>
+<td class="r data">1923</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="data">1</td>
+<td class="r data">0.78021</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">2</th>
+<td class="r data">143168</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="data">1</td>
+<td class="r data">0.72286</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">3</th>
+<td class="r data">162213</td>
+<td class="data">M</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="data">1</td>
+<td class="r data">0.68486</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">4</th>
+<td class="r data">159358</td>
+<td class="data">M</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="data">1</td>
+<td class="r data">0.67064</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">5</th>
+<td class="r data">189715</td>
+<td class="data">F</td>
+<td class="data">Member</td>
+<td class="data">Unknown</td>
+<td class="data">1</td>
+<td class="r data">0.65827</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">6</th>
+<td class="r data">189901</td>
+<td class="data">M</td>
+<td class="data">Platinum</td>
+<td class="data">Unknown</td>
+<td class="data">1</td>
+<td class="r data">0.62478</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">7</th>
+<td class="r data">162618</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="data">1</td>
+<td class="r data">0.58713</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">8</th>
+<td class="r data">186448</td>
+<td class="data">M</td>
+<td class="data">Platinum</td>
+<td class="data">Unknown</td>
+<td class="data">1</td>
+<td class="r data">0.56503</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">9</th>
+<td class="r data">143794</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">Unknown</td>
+<td class="data">1</td>
+<td class="r data">0.54008</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">10</th>
+<td class="r data">10561</td>
+<td class="data">M</td>
+<td class="data">Platinum</td>
+<td class="data">Unknown</td>
+<td class="data">1</td>
+<td class="r data">0.53574</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="markdown-cell">
+<h2>Proc gradboost - built the model - created the Astore file needed for scoring</h2>
+<p>The Astore file was created in previous steps using this type of code:</p>
+<pre><code class="language-sas">proc gradboost data=work.customer_churn_ml_train_final ntrees=100 maxdepth=5 assignmissing=useinsearch;
+    input &amp;char_vars / level=nominal;
+    input &amp;num_vars / level=interval;
+    target &amp;target / level=nominal;
+    savestate rstore=gbstore;  /* creates ASTORE binary for scoring  */
+    *code file=&#39;gbscore.sas&#39;;  /* creates 70,000 line SAS scoring program  */
+run;
+</code></pre>
+
+</div>
+<div class="markdown-cell">
+<h2>Score a data set using the Astore file from the gradient boosting model</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-keyword">title2</span> <span class="sas-syntax-string">'ASTORE describe and scoring'</span><span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">astore</span><span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">score</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>churn.customer_churn_ml_test_final <span class="sas-syntax-keyword">rstore</span><span class="sas-syntax-sep">=</span>gbstore
+          <span class="sas-syntax-keyword">out</span><span class="sas-syntax-sep">=</span>grad_scored <span class="sas-syntax-keyword">copyvars</span><span class="sas-syntax-sep">=</span><span class="sas-syntax-sep">(</span><span class="sas-syntax-sep">&</span>char_vars ID <span class="sas-syntax-sep">)</span><span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span><span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">2622  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">2623  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">2624  ods graphics on;</div>
+<div class="log-line sas-log-source">2625  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml114.htm</div>
+<div class="log-line sas-log-source">2626  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">2626! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
+<div class="log-line sas-log-source">2626! g_the_Model/01_Deploying_the_Model.sasnb));</div>
+<div class="log-line sas-log-source">2627  title2 'ASTORE describe and scoring';</div>
+<div class="log-line sas-log-source">2628  proc astore;</div>
+<div class="log-line sas-log-source">2629      score data=churn.customer_churn_ml_test_final rstore=gbstore</div>
+<div class="log-line sas-log-source">2630            out=grad_scored copyvars=(&char_vars ID );</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.GRAD_SCORED has 1499 observations and 8 variables.</div>
+<div class="log-line sas-log-source">2631  run;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE ASTORE used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.12 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.08 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2632  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">2633  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
+<style>
+/*<![CDATA[*/
+.body.c > table, .body.c > pre, .body.c div > table,
+.body.c div > pre, .body.c > table, .body.c > pre,
+.body.j > table, .body.j > pre, .body.j div > table,
+.body.j div > pre, .body.j > table, .body.j > pre,
+.body.c p.note, .body.c p.warning, .body.c p.error, .body.c p.fatal,
+.body.j p.note, .body.j p.warning, .body.j p.error, .body.j p.fatal,
+.body.c > table.layoutcontainer, .body.j > table.layoutcontainer { margin-left: auto; margin-right: auto }
+.layoutregion.l table, .layoutregion.l pre, .layoutregion.l p.note,
+.layoutregion.l p.warning, .layoutregion.l p.error, .layoutregion.l p.fatal { margin-left: 0 }
+.layoutregion.c table, .layoutregion.c pre, .layoutregion.c p.note,
+.layoutregion.c p.warning, .layoutregion.c p.error, .layoutregion.c p.fatal { margin-left: auto; margin-right: auto }
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r p.warning, .layoutregion.r p.error, .layoutregion.r p.fatal { margin-right: 0 }
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block }
+html{ font-size: 100% }
+.body { margin: 1em; font-size: 13px; line-height: 1.231 }
+sup { position: relative; vertical-align: baseline; bottom: 0.25em; font-size: 0.8em }
+sub { position: relative; vertical-align: baseline; top: 0.25em; font-size: 0.8em }
+ul, ol { margin: 1em 0; padding: 0 0 0 40px }
+dd { margin: 0 0 0 40px }
+nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0 }
+img { border: 0; vertical-align: middle }
+svg:not(:root) { overflow: hidden }
+figure { margin: 0 }
+table { border-collapse: collapse; border-spacing: 0 }
+.layoutcontainer { border-collapse: separate; border-spacing: 0 }
+p { margin-top: 0; text-align: left }
+h1.heading1 { text-align: left }
+h2.heading2 { text-align: left }
+h3.heading3 { text-align: left }
+h4.heading4 { text-align: left }
+h5.heading5 { text-align: left }
+h6.heading6 { text-align: left }
+span { text-align: left }
+table { margin-bottom: 1em }
+td, th { text-align: left; padding: 3px 6px; vertical-align: top }
+td[class$="fixed"], th[class$="fixed"] { white-space: pre }
+section, article { padding-top: 1px; padding-bottom: 8px }
+hr.pagebreak { height: 0px; border: 0; border-bottom: 1px solid #c0c0c0; margin: 1em 0 }
+.stacked-value { text-align: left; display: block }
+.stacked-cell > .stacked-value, td.data > td.data, th.data > td.data, th.data > th.data, td.data > th.data, th.header > th.header { border: 0 }
+.stacked-cell > div.data { border-width: 0 }
+.systitleandfootercontainer { white-space: nowrap; margin-bottom: 1em }
+.systitleandfootercontainer > p { margin: 0 }
+.systitleandfootercontainer > p > span { display: inline-block; width: 100%; white-space: normal }
+.batch { display: table }
+.toc { display: none }
+.proc_note_group, .proc_title_group { margin-bottom: 1em }
+p.proctitle { margin: 0 }
+p.note, p.warning, p.error, p.fatal { display: table }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner,
+.notecontent, .warncontent, .errorcontent, .fatalcontent { display: table-cell; padding: 0.5em }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner { padding-right: 0 }
+.body > div > ol li { text-align: left }
+.beforecaption > h4 { margin-top: 0; margin-bottom: 0 }
+.c { text-align: center }
+.r { text-align: right }
+.l { text-align: left }
+.j { text-align: justify }
+.d { text-align: right }
+.b { vertical-align: bottom }
+.m { vertical-align: middle }
+.t { vertical-align: top }
+.accessiblecaption {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+a:active { color: #800080 }
+.aftercaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    padding-top: 4pt;
+}
+.batch > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.batch > tbody, .batch > thead, .batch > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.batch { border: hidden; }
+.batch {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'SAS Monospace', 'Courier New', Courier, monospace;
+    font-size: 7pt;
+    font-style: normal;
+    font-weight: normal;
+    padding: 7px;
+    }
+.beforecaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.body {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.bodydate {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: right;
+    vertical-align: top;
+    width: 100%;
+}
+.bycontentfolder {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.byline {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.bylinecontainer > col, .bylinecontainer > colgroup > col, .bylinecontainer > colgroup, .bylinecontainer > tr, .bylinecontainer > * > tr, .bylinecontainer > thead, .bylinecontainer > tbody, .bylinecontainer > tfoot { border: none; }
+.bylinecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.caption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.cell, .container {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.contentfolder, .contentitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.contentproclabel, .contentprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.contents {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.contentsdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.contenttitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.continued {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    width: 100%;
+}
+.data, .dataemphasis {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.dataemphasisfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.dataempty {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datafixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datastrong {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.datastrongfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.date {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.document {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.errorcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.extendedpage {
+    background-color: #fafbfe;
+    border-style: solid;
+    border-width: 1pt;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+    text-align: center;
+}
+.fatalbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.fatalcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.fatalcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.folderaction {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.footer {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footeremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footeremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.footerstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.frame {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.graph > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.graph > tbody, .graph > thead, .graph > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.graph { border: hidden; }
+.graph {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.header {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headeremphasis {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headeremphasisfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.headersandfooters {
+    background-color: #edf2f9;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrong {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrongfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading1 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 24pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 18pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading3 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 14pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading4 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading5 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 10pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading6 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.index {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.indexaction, .indexitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.indexprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.indextitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.layoutcontainer, .layoutregion {
+    border-width: 0;
+    border-spacing: 30px;
+}
+.linecontent {
+    background-color: #fafbfe;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:link { color: #0000ff }
+.list {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.list10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.list2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.list3, .list4, .list5, .list6, .list7, .list8, .list9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.listitem10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.listitem3, .listitem4, .listitem5, .listitem6, .listitem7, .listitem8, .listitem9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.note {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notebanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.notecontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notecontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.output > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.output > tbody, .output > thead, .output > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.output { border: hidden; }
+.output {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.pageno {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    text-align: right;
+    vertical-align: top;
+}
+.pages {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.pagesdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.pagesitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.pagesproclabel, .pagesprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.pagestitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.paragraph {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.parskip > col, .parskip > colgroup > col, .parskip > colgroup, .parskip > tr, .parskip > * > tr, .parskip > thead, .parskip > tbody, .parskip > tfoot { border: none; }
+.parskip {
+    border: none;
+    border-spacing: 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    }
+.prepage {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+}
+.proctitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.proctitlefixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooter {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooteremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooteremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooterempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowfooterstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheader {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderemphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderemphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowheaderstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systemfooter, .systemfooter10, .systemfooter2, .systemfooter3, .systemfooter4, .systemfooter5, .systemfooter6, .systemfooter7, .systemfooter8, .systemfooter9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.systemtitle, .systemtitle10, .systemtitle2, .systemtitle3, .systemtitle4, .systemtitle5, .systemtitle6, .systemtitle7, .systemtitle8, .systemtitle9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systitleandfootercontainer > col, .systitleandfootercontainer > colgroup > col, .systitleandfootercontainer > colgroup, .systitleandfootercontainer > tr, .systitleandfootercontainer > * > tr, .systitleandfootercontainer > thead, .systitleandfootercontainer > tbody, .systitleandfootercontainer > tfoot { border: none; }
+.systitleandfootercontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.table > col, .table > colgroup > col {
+    border-left: 1px solid #c1c1c1;
+    border-right: 0 solid #c1c1c1;
+}
+.table > tr, .table > * > tr {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 0 solid #c1c1c1;
+}
+.table { border: hidden; }
+.table {
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+.titleandnotecontainer > col, .titleandnotecontainer > colgroup > col, .titleandnotecontainer > colgroup, .titleandnotecontainer > tr, .titleandnotecontainer > * > tr, .titleandnotecontainer > thead, .titleandnotecontainer > tbody, .titleandnotecontainer > tfoot { border: none; }
+.titleandnotecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.titlesandfooters {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.usertext {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:visited { color: #800080 }
+.warnbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.warncontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.warncontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+/*]]>*/
+</style>
+<div class="c body">
+<div style="padding-bottom: 8px; padding-top: 1px">
+<div id="IDX" class="systitleandfootercontainer" style="border-spacing: 1px">
+<p><span class="c systemtitle2">ASTORE describe and scoring</span> </p>
+</div>
+<div class="proc_title_group">
+<p class="c proctitle">The ASTORE Procedure</p>
+</div>
+<div style="padding-bottom: 8px; padding-top: 1px">
+<table class="table" style="border-spacing: 0" aria-label="Output CAS Tables">
+<caption aria-label="Output CAS Tables"></caption>
+<colgroup><col/><col/><col/><col/></colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="4" scope="colgroup">Output Tables</th>
+</tr>
+<tr>
+<th class="b header" scope="col">Library</th>
+<th class="b header" scope="col">Name</th>
+<th class="r b header" scope="col">Number<br/>of Rows</th>
+<th class="r b header" scope="col">Number<br/>of Columns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="rowheader" scope="row">WORK</th>
+<th class="rowheader" scope="row">GRAD_SCORED</th>
+<td class="r data">1499</td>
+<td class="r data">8</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="IDX1" style="padding-bottom: 8px; padding-top: 1px">
+<table class="table" style="border-spacing: 0" aria-label="Task Timing">
+<caption aria-label="Task Timing"></caption>
+<colgroup><col/></colgroup><colgroup><col/><col/></colgroup>
+<thead>
+<tr>
+<th class="c b header" colspan="3" scope="colgroup">Task Timing</th>
+</tr>
+<tr>
+<th class="b header" scope="col">Task</th>
+<th class="r b header" scope="col">Seconds</th>
+<th class="r b header" scope="col">Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="rowheader" scope="row">Loading the Store</th>
+<td class="r data">0.00</td>
+<td class="r data">0.07%</td>
+</tr>
+<tr>
+<th class="rowheader" scope="row">Creating the State</th>
+<td class="r data">0.00</td>
+<td class="r data">13.33%</td>
+</tr>
+<tr>
+<th class="rowheader" scope="row">Scoring</th>
+<td class="r data">0.01</td>
+<td class="r data">85.05%</td>
+</tr>
+<tr>
+<th class="rowheader" scope="row">Total</th>
+<td class="r data">0.02</td>
+<td class="r data">100.00%</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="markdown-cell">
+<h2>Print a few observations with the scores</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">sort</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>grad_scored <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">by</span> <span class="sas-syntax-keyword">descending</span> P_LostCustomer1 <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">print</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>grad_scored <span class="sas-syntax-sep">(</span><span class="sas-syntax-keyword">obs</span><span class="sas-syntax-sep">=</span><span class="sas-syntax-numeric">10</span><span class="sas-syntax-sep">)</span> <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">2634  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">2635  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">2636  ods graphics on;</div>
+<div class="log-line sas-log-source">2637  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml115.htm</div>
+<div class="log-line sas-log-source">2638  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">2638! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
+<div class="log-line sas-log-source">2638! g_the_Model/01_Deploying_the_Model.sasnb));</div>
+<div class="log-line sas-log-source">2639  proc sort data=grad_scored ;</div>
+<div class="log-line sas-log-source">2640      by descending P_LostCustomer1 ;</div>
+<div class="log-line sas-log-source">2641  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set WORK.GRAD_SCORED.</div>
+<div class="log-line sas-log-note">NOTE: The data set WORK.GRAD_SCORED has 1499 observations and 8 variables.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE SORT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2642  proc print data=grad_scored (obs=10) ;</div>
+<div class="log-line sas-log-source">2643  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set WORK.GRAD_SCORED.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.01 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">2644  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-title">84                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">2645  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+<div class="cell-output">
+<style>
+/*<![CDATA[*/
+.body.c > table, .body.c > pre, .body.c div > table,
+.body.c div > pre, .body.c > table, .body.c > pre,
+.body.j > table, .body.j > pre, .body.j div > table,
+.body.j div > pre, .body.j > table, .body.j > pre,
+.body.c p.note, .body.c p.warning, .body.c p.error, .body.c p.fatal,
+.body.j p.note, .body.j p.warning, .body.j p.error, .body.j p.fatal,
+.body.c > table.layoutcontainer, .body.j > table.layoutcontainer { margin-left: auto; margin-right: auto }
+.layoutregion.l table, .layoutregion.l pre, .layoutregion.l p.note,
+.layoutregion.l p.warning, .layoutregion.l p.error, .layoutregion.l p.fatal { margin-left: 0 }
+.layoutregion.c table, .layoutregion.c pre, .layoutregion.c p.note,
+.layoutregion.c p.warning, .layoutregion.c p.error, .layoutregion.c p.fatal { margin-left: auto; margin-right: auto }
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r table, .layoutregion.r pre, .layoutregion.r p.note,
+.layoutregion.r p.warning, .layoutregion.r p.error, .layoutregion.r p.fatal { margin-right: 0 }
+article, aside, details, figcaption, figure, footer, header, hgroup, nav, section { display: block }
+html{ font-size: 100% }
+.body { margin: 1em; font-size: 13px; line-height: 1.231 }
+sup { position: relative; vertical-align: baseline; bottom: 0.25em; font-size: 0.8em }
+sub { position: relative; vertical-align: baseline; top: 0.25em; font-size: 0.8em }
+ul, ol { margin: 1em 0; padding: 0 0 0 40px }
+dd { margin: 0 0 0 40px }
+nav ul, nav ol { list-style: none; list-style-image: none; margin: 0; padding: 0 }
+img { border: 0; vertical-align: middle }
+svg:not(:root) { overflow: hidden }
+figure { margin: 0 }
+table { border-collapse: collapse; border-spacing: 0 }
+.layoutcontainer { border-collapse: separate; border-spacing: 0 }
+p { margin-top: 0; text-align: left }
+h1.heading1 { text-align: left }
+h2.heading2 { text-align: left }
+h3.heading3 { text-align: left }
+h4.heading4 { text-align: left }
+h5.heading5 { text-align: left }
+h6.heading6 { text-align: left }
+span { text-align: left }
+table { margin-bottom: 1em }
+td, th { text-align: left; padding: 3px 6px; vertical-align: top }
+td[class$="fixed"], th[class$="fixed"] { white-space: pre }
+section, article { padding-top: 1px; padding-bottom: 8px }
+hr.pagebreak { height: 0px; border: 0; border-bottom: 1px solid #c0c0c0; margin: 1em 0 }
+.stacked-value { text-align: left; display: block }
+.stacked-cell > .stacked-value, td.data > td.data, th.data > td.data, th.data > th.data, td.data > th.data, th.header > th.header { border: 0 }
+.stacked-cell > div.data { border-width: 0 }
+.systitleandfootercontainer { white-space: nowrap; margin-bottom: 1em }
+.systitleandfootercontainer > p { margin: 0 }
+.systitleandfootercontainer > p > span { display: inline-block; width: 100%; white-space: normal }
+.batch { display: table }
+.toc { display: none }
+.proc_note_group, .proc_title_group { margin-bottom: 1em }
+p.proctitle { margin: 0 }
+p.note, p.warning, p.error, p.fatal { display: table }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner,
+.notecontent, .warncontent, .errorcontent, .fatalcontent { display: table-cell; padding: 0.5em }
+.notebanner, .warnbanner, .errorbanner, .fatalbanner { padding-right: 0 }
+.body > div > ol li { text-align: left }
+.beforecaption > h4 { margin-top: 0; margin-bottom: 0 }
+.c { text-align: center }
+.r { text-align: right }
+.l { text-align: left }
+.j { text-align: justify }
+.d { text-align: right }
+.b { vertical-align: bottom }
+.m { vertical-align: middle }
+.t { vertical-align: top }
+.accessiblecaption {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+a:active { color: #800080 }
+.aftercaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    padding-top: 4pt;
+}
+.batch > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.batch > tbody, .batch > thead, .batch > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.batch { border: hidden; }
+.batch {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'SAS Monospace', 'Courier New', Courier, monospace;
+    font-size: 7pt;
+    font-style: normal;
+    font-weight: normal;
+    padding: 7px;
+    }
+.beforecaption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.body {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.bodydate {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: right;
+    vertical-align: top;
+    width: 100%;
+}
+.bycontentfolder {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.byline {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.bylinecontainer > col, .bylinecontainer > colgroup > col, .bylinecontainer > colgroup, .bylinecontainer > tr, .bylinecontainer > * > tr, .bylinecontainer > thead, .bylinecontainer > tbody, .bylinecontainer > tfoot { border: none; }
+.bylinecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.caption {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.cell, .container {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.contentfolder, .contentitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.contentproclabel, .contentprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.contents {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.contentsdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.contenttitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.continued {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    width: 100%;
+}
+.data, .dataemphasis {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.dataemphasisfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.dataempty {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datafixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.datastrong {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.datastrongfixed {
+    background-color: #ffffff;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.date {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.document {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.errorcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.errorcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.extendedpage {
+    background-color: #fafbfe;
+    border-style: solid;
+    border-width: 1pt;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+    text-align: center;
+}
+.fatalbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.fatalcontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.fatalcontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.folderaction {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.footer {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footeremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footeremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.footerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.footerstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.footerstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.frame {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.graph > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.graph > tbody, .graph > thead, .graph > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.graph { border: hidden; }
+.graph {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.header {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headeremphasis {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headeremphasisfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.headerempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.headersandfooters {
+    background-color: #edf2f9;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrong {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.headerstrongfixed {
+    background-color: #d8dbd3;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #000000;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading1 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 24pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 18pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading3 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 14pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading4 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading5 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 10pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.heading6 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.index {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.indexaction, .indexitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.indexprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.indextitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.layoutcontainer, .layoutregion {
+    border-width: 0;
+    border-spacing: 30px;
+}
+.linecontent {
+    background-color: #fafbfe;
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:link { color: #0000ff }
+.list {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.list10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.list2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.list3, .list4, .list5, .list6, .list7, .list8, .list9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: disc;
+}
+.listitem10 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.listitem2 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: circle;
+}
+.listitem3, .listitem4, .listitem5, .listitem6, .listitem7, .listitem8, .listitem9 {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: square;
+}
+.note {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notebanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.notecontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.notecontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.output > colgroup {
+    border-left: 1px solid #c1c1c1;
+    border-right: 1px solid #c1c1c1;
+}
+.output > tbody, .output > thead, .output > tfoot {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
+}
+.output { border: hidden; }
+.output {
+    background-color: #fafbfe;
+    border: 1px solid #c1c1c1;
+    border-collapse: separate;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    }
+.pageno {
+    background-color: #fafbfe;
+    border-spacing: 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    text-align: right;
+    vertical-align: top;
+}
+.pages {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: decimal;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+.pagesdate {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.pagesitem {
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    list-style-type: none;
+    margin-left: 6pt;
+}
+.pagesproclabel, .pagesprocname {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.pagestitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: bold;
+}
+.paragraph {
+    background-color: #fafbfe;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.parskip > col, .parskip > colgroup > col, .parskip > colgroup, .parskip > tr, .parskip > * > tr, .parskip > thead, .parskip > tbody, .parskip > tfoot { border: none; }
+.parskip {
+    border: none;
+    border-spacing: 0;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+    }
+.prepage {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    text-align: left;
+}
+.proctitle {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.proctitlefixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooter {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooteremphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooteremphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowfooterempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowfooterstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowfooterstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheader {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderemphasis {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderemphasisfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: italic;
+    font-weight: normal;
+}
+.rowheaderempty {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.rowheaderstrong {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.rowheaderstrongfixed {
+    background-color: #edf2f9;
+    border-color: #b0b7bb;
+    border-style: solid;
+    border-width: 0 1px 1px 0;
+    color: #112277;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systemfooter, .systemfooter10, .systemfooter2, .systemfooter3, .systemfooter4, .systemfooter5, .systemfooter6, .systemfooter7, .systemfooter8, .systemfooter9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.systemtitle, .systemtitle10, .systemtitle2, .systemtitle3, .systemtitle4, .systemtitle5, .systemtitle6, .systemtitle7, .systemtitle8, .systemtitle9 {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.systitleandfootercontainer > col, .systitleandfootercontainer > colgroup > col, .systitleandfootercontainer > colgroup, .systitleandfootercontainer > tr, .systitleandfootercontainer > * > tr, .systitleandfootercontainer > thead, .systitleandfootercontainer > tbody, .systitleandfootercontainer > tfoot { border: none; }
+.systitleandfootercontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.table > col, .table > colgroup > col {
+    border-left: 1px solid #c1c1c1;
+    border-right: 0 solid #c1c1c1;
+}
+.table > tr, .table > * > tr {
+    border-top: 1px solid #c1c1c1;
+    border-bottom: 0 solid #c1c1c1;
+}
+.table { border: hidden; }
+.table {
+    border-color: #c1c1c1;
+    border-style: solid;
+    border-width: 1px 0 0 1px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+.titleandnotecontainer > col, .titleandnotecontainer > colgroup > col, .titleandnotecontainer > colgroup, .titleandnotecontainer > tr, .titleandnotecontainer > * > tr, .titleandnotecontainer > thead, .titleandnotecontainer > tbody, .titleandnotecontainer > tfoot { border: none; }
+.titleandnotecontainer {
+    background-color: #fafbfe;
+    border: none;
+    border-spacing: 1px;
+    color: #000000;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+    width: 100%;
+}
+.titlesandfooters {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.usertext {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+a:visited { color: #800080 }
+.warnbanner {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: bold;
+}
+.warncontent {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Anova UI', Arial, 'Albany AMT', Helvetica, Helv;
+    font-size: 9pt;
+    font-style: normal;
+    font-weight: normal;
+}
+.warncontentfixed {
+    background-color: #fafbfe;
+    color: #112277;
+    font-family: 'Courier New', Courier;
+    font-size: 8pt;
+    font-style: normal;
+    font-weight: normal;
+}
+/*]]>*/
+</style>
+<div class="c body">
+<div style="padding-bottom: 8px; padding-top: 1px">
+<div id="IDX" style="padding-bottom: 8px; padding-top: 1px">
+<table class="table" style="border-spacing: 0" aria-label="Data Set WORK.GRAD_SCORED">
+<caption aria-label="Data Set WORK.GRAD_SCORED"></caption>
+<colgroup><col/></colgroup><colgroup><col/><col/><col/><col/><col/><col/><col/><col/></colgroup>
+<thead>
+<tr>
+<th class="r header" scope="col">Obs</th>
+<th class="r header" scope="col">P_LostCustomer1</th>
+<th class="r header" scope="col">P_LostCustomer0</th>
+<th class="header" scope="col">I_LostCustomer</th>
+<th class="header" scope="col">_WARN_</th>
+<th class="header" scope="col">customerGender</th>
+<th class="header" scope="col">customerSubscrStat</th>
+<th class="header" scope="col">DemHomeOwner</th>
+<th class="r header" scope="col">ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="r rowheader" scope="row">1</th>
+<td class="r data">0.94834</td>
+<td class="r data">0.05166</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="r data">148840</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">2</th>
+<td class="r data">0.94580</td>
+<td class="r data">0.05420</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">HomeOwner</td>
+<td class="r data">65423</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">3</th>
+<td class="r data">0.94298</td>
+<td class="r data">0.05702</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Platinum</td>
+<td class="data">Unknown</td>
+<td class="r data">148544</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">4</th>
+<td class="r data">0.93999</td>
+<td class="r data">0.06001</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">Unknown</td>
+<td class="r data">64983</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">5</th>
+<td class="r data">0.92639</td>
+<td class="r data">0.07361</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">HomeOwner</td>
+<td class="r data">131434</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">6</th>
+<td class="r data">0.90669</td>
+<td class="r data">0.09331</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">HomeOwner</td>
+<td class="r data">137539</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">7</th>
+<td class="r data">0.88444</td>
+<td class="r data">0.11556</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">HomeOwner</td>
+<td class="r data">160275</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">8</th>
+<td class="r data">0.88384</td>
+<td class="r data">0.11616</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">M</td>
+<td class="data">Gold</td>
+<td class="data">Unknown</td>
+<td class="r data">139512</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">9</th>
+<td class="r data">0.87688</td>
+<td class="r data">0.12312</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">Unknown</td>
+<td class="r data">168234</td>
+</tr>
+<tr>
+<th class="r rowheader" scope="row">10</th>
+<td class="r data">0.87325</td>
+<td class="r data">0.12675</td>
+<td class="data">1</td>
+<td class="data"> &#160;</td>
+<td class="data">F</td>
+<td class="data">Gold</td>
+<td class="data">Unknown</td>
+<td class="r data">75376</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="markdown-cell">
+<h2>Connecting an astore model from SAS Viya Workbench to SAS Viya Model Manager</h2>
+<p><em>Note: Now available, see &quot;Transitioning the model to SAS Viya&quot; demonstration video in &quot;Lesson 6: Bridging SAS Viya Workbench and SAS Viya&quot;.</em></p>
+<p>The astore file is downloaded for proc registermodel to access. A token is required to connect to the SAS Viya environment that is accessed via the server url.
+A new Model Manager project called myProject is created in Viya that includes all components of the gradient boosting model.
+An example of the code structure is shown below.</p>
+<pre><code class="language-sas">proc astore;
+   download rstore = work.gbstore
+            store = &quot;gbstore.sasast&quot;;
+run;
+
+/* get token */
+%macro myTokenName() / secure;
+&quot;Bearer ...&quot;
+%mend;
+
+proc registermodel
+      name = &quot;gbAstore&quot;
+      description = &quot;GradBoost Astore Model&quot;
+      data = work.CUSTOMER_CHURN_ML_TRAIN_FINAL
+      algorithm = GRADBOOST
+      function = CLASSIFICATION
+      server = &quot;https://your viya server.com&quot;
+      oauthtoken = &quot;myTokenName&quot;
+      replace;
+   project name=&quot;myProject&quot; folder=&quot;myFolder&quot;;
+   astoremodel store = &quot;gbstore.sasast&quot;;
+   target LostCustomer / level=binary event=&quot;1&quot;;
+   assessment;
+run;
+</code></pre>
+
+</div>
+
+  </body>
+</html>
