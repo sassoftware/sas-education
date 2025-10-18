@@ -1,0 +1,608 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font-family: "Segoe UI", sans-serif;
+      }
+      .markdown-cell table td,
+      .markdown-cell table th {
+        border: 1px solid var(--border-color);
+      }
+      .markdown-cell code {
+        padding: 0 .4em;
+        border-radius: 4px;
+        background-color: var(--highlight-background-color);
+      }
+      .code-cell {
+        position: relative;
+        font-size: 14px;
+      }
+      .code-cell pre code {
+        font-family: Consolas, monospace;
+      }
+      pre code.hljs {
+        display: block;
+        overflow-x: auto;
+        padding: 1em;
+        border: 1px solid var(--border-color);
+      }
+      .code-cell .languageId {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        text-transform: uppercase;
+        padding: .1em .5em;
+        background-color: var(--highlight-background-color);
+      }
+      .log-line {
+        font-family: Consolas, monospace;
+        font-size: 14px;
+        white-space: pre-wrap;
+        margin-inline-start: 1em;
+      }
+      body {
+  color: #3b3b3b;
+  --border-color: #b0b7bb;
+  --highlight-background-color: #818b981f;
+}
+.hljs {
+  background: #fff;
+}
+
+/* Syntax highlighting */
+.hljs-operator,
+.hljs-punctuation {
+  color: #1b1d22;
+}
+
+.hljs-keyword {
+  color: #3578c5;
+}
+
+.hljs-comment {
+  color: #647f29;
+}
+
+.hljs-string {
+  color: #8f4238;
+}
+
+.hljs-number {
+  color: #3c8275;
+}
+
+.hljs-title {
+  color: #224c7c;
+  font-weight: bold;
+}
+
+.hljs-built_in {
+  color: #aa0d91;
+}
+
+/* SAS Syntax */
+.sas-syntax-sep {
+  color: #1b1d22;
+}
+
+.sas-syntax-keyword,
+.sas-syntax-macro-keyword {
+  color: #3578c5;
+}
+
+.sas-syntax-sec-keyword,
+.sas-syntax-proc-name {
+  color: #224c7c;
+  font-weight: bold;
+}
+
+.sas-syntax-comment,
+.sas-syntax-macro-comment {
+  color: #647f29;
+}
+
+.sas-syntax-macro-ref,
+.sas-syntax-macro-sec-keyword {
+  color: #1b1d22;
+  font-weight: bold;
+}
+
+.sas-syntax-cards-data {
+  color: #ad6531;
+}
+
+.sas-syntax-string {
+  color: #8f4238;
+}
+
+.sas-syntax-date,
+.sas-syntax-time,
+.sas-syntax-dt,
+.sas-syntax-bitmask {
+  color: #3c8275;
+  font-weight: bold;
+}
+
+.sas-syntax-namelit {
+  color: #8f4238;
+  font-weight: bold;
+}
+
+.sas-syntax-hex,
+.sas-syntax-numeric {
+  color: #3c8275;
+  font-weight: bold;
+}
+
+.sas-syntax-format {
+  color: #3c8275;
+}
+
+.log-line.sas-log-error {
+  color: #ff0000;
+}
+
+.log-line.sas-log-warning {
+  color: #8f5f00;
+}
+
+.log-line.sas-log-note {
+  color: #0000ff;
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="markdown-cell">
+<h1>Saving the Final Data Set</h1>
+<p><em>Note: This notebook relies on previous SAS notebook.</em></p>
+<h2>Set project path if necessary</h2>
+<p>In case you have not followed previous steps, adapt and run the following code:</p>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Automatic macro-variable pointing to your storage mount path */</span>
+<span class="sas-syntax-comment">/*</span>
+<span class="sas-syntax-comment">%put &=WORKSPACE_PATH ;</span>
+<span class="sas-syntax-comment">%let path=&WORKSPACE_PATH/sas-education/sas1 ;</span>
+<span class="sas-syntax-comment">*/</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">502  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">503  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">504  ods graphics on;</div>
+<div class="log-line sas-log-source">505  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml45.htm</div>
+<div class="log-line sas-log-source">506  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">506! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">506! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">507  /* Automatic macro-variable pointing to your storage mount path */</div>
+<div class="log-line sas-log-source">508  /*</div>
+<div class="log-line sas-log-source">509  %put &=WORKSPACE_PATH ;</div>
+<div class="log-line sas-log-source">510  %let path=&WORKSPACE_PATH/sas-education/sas1 ;</div>
+<div class="log-line sas-log-source">511  */</div>
+<div class="log-line sas-log-source">512  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">513  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Assign a SAS library to store the output table</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Define a new SAS library pointing to where we want to create the physical table */</span>
+<span class="sas-syntax-keyword">libname</span> churn <span class="sas-syntax-string">"&path/data/output"</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">514  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">515  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">516  ods graphics on;</div>
+<div class="log-line sas-log-source">517  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml46.htm</div>
+<div class="log-line sas-log-source">518  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">518! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">518! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">519  /* Define a new SAS library pointing to where we want to create the physical table */</div>
+<div class="log-line sas-log-source">520  libname churn "&path/data/output" ;</div>
+<div class="log-line sas-log-note">NOTE: Libref CHURN was successfully assigned as follows: </div>
+<div class="log-line sas-log-note">      Engine:        V9 </div>
+<div class="log-line sas-log-note">      Physical Name: /workspaces/churnproject/sas-education/sas1/data/output</div>
+<div class="log-line sas-log-source">521  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">522  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Copy the table using a simple DATA Step</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Simple DATA Step to create the table in the final destination */</span>
+<span class="sas-syntax-sec-keyword">data</span> churn.customer_churn_abt <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">set</span> churn2 <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">523  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">524  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">525  ods graphics on;</div>
+<div class="log-line sas-log-source">526  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml47.htm</div>
+<div class="log-line sas-log-source">527  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">527! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">527! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">528  /* Simple DATA Step to create the table in the final destination */</div>
+<div class="log-line sas-log-source">529  data churn.customer_churn_abt ;</div>
+<div class="log-line sas-log-source">530      set churn2 ;</div>
+<div class="log-line sas-log-source">531  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set WORK.CHURN2.</div>
+<div class="log-line sas-log-note">NOTE: The data set CHURN.CUSTOMER_CHURN_ABT has 5000 observations and 31 variables.</div>
+<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.03 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.00 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">532  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">533  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Equivalent using SQL</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* SQL Example to do the same */</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">sql</span> <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">create</span> <span class="sas-syntax-keyword">table</span> churn.customer_churn_abt
+    as select <span class="sas-syntax-sep">*</span> from churn2 <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">quit</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">534  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-title">22                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">535  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">536  ods graphics on;</div>
+<div class="log-line sas-log-source">537  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml48.htm</div>
+<div class="log-line sas-log-source">538  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">538! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">538! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">539  /* SQL Example to do the same */</div>
+<div class="log-line sas-log-source">540  proc sql ;</div>
+<div class="log-line sas-log-source">541      create table churn.customer_churn_abt</div>
+<div class="log-line sas-log-source">542      as select * from churn2 ;</div>
+<div class="log-line sas-log-note">NOTE: Table CHURN.CUSTOMER_CHURN_ABT created, with 5000 rows and 31 columns.</div>
+<div class="log-line sas-log-normal"></div>
+<div class="log-line sas-log-source">543  quit ;</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE SQL used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">544  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">545  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Append example - Adding rows to an existing table</h2>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Append Example - sometimes we just want to add records to an existing table */</span>
+<span class="sas-syntax-comment">/* This will add 5000 rows to the existing 5000 rows table that we just created */</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">append</span> <span class="sas-syntax-keyword">base</span><span class="sas-syntax-sep">=</span>churn.customer_churn_abt <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>churn2 <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">546  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">547  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">548  ods graphics on;</div>
+<div class="log-line sas-log-source">549  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml49.htm</div>
+<div class="log-line sas-log-source">550  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">550! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">550! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">551  /* Append Example - sometimes we just want to add records to an existing table */</div>
+<div class="log-line sas-log-source">552  /* This will add 5000 rows to the existing 5000 rows table that we just created */</div>
+<div class="log-line sas-log-source">553  proc append base=churn.customer_churn_abt data=churn2 ;</div>
+<div class="log-line sas-log-source">554  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: Appending WORK.CHURN2 to CHURN.CUSTOMER_CHURN_ABT.</div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set WORK.CHURN2.</div>
+<div class="log-line sas-log-note">NOTE: 5000 observations added.</div>
+<div class="log-line sas-log-note">NOTE: The data set CHURN.CUSTOMER_CHURN_ABT has 10000 observations and 31 variables.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE APPEND used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">555  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">556  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h2>Saving data outside of SAS</h2>
+<p>What if we want to export this data set to external data systems?</p>
+<h3>Export to CSV</h3>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Export to CSV Example - if we want to share the data with another application */</span>
+<span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">export</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>churn2 <span class="sas-syntax-keyword">outfile</span><span class="sas-syntax-sep">=</span><span class="sas-syntax-string">"&path/data/output/customer_churn_abt.csv"</span> <span class="sas-syntax-keyword">dbms</span><span class="sas-syntax-sep">=</span>csv <span class="sas-syntax-keyword">replace</span> <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">557  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">558  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">559  ods graphics on;</div>
+<div class="log-line sas-log-source">560  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml50.htm</div>
+<div class="log-line sas-log-source">561  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">561! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">561! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">562  /* Export to CSV Example - if we want to share the data with another application */</div>
+<div class="log-line sas-log-source">563  proc export data=churn2 outfile="&path/data/output/customer_churn_abt.csv" dbms=csv replace ;</div>
+<div class="log-line sas-log-source">564  run ;</div>
+<div class="log-line sas-log-title">23                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">565   /**********************************************************************</div>
+<div class="log-line sas-log-source">566   *   PRODUCT:   SAS</div>
+<div class="log-line sas-log-source">567   *   VERSION:   V.04.00</div>
+<div class="log-line sas-log-source">568   *   CREATOR:   External File Interface</div>
+<div class="log-line sas-log-source">569   *   DATE:      03OCT25</div>
+<div class="log-line sas-log-source">570   *   DESC:      Generated SAS Datastep Code</div>
+<div class="log-line sas-log-source">571   *   TEMPLATE SOURCE:  (None Specified.)</div>
+<div class="log-line sas-log-source">572   ***********************************************************************/</div>
+<div class="log-line sas-log-source">573      data _null_;</div>
+<div class="log-line sas-log-source">574      %let _EFIERR_ = 0; /* set the ERROR detection macro variable */</div>
+<div class="log-line sas-log-source">575      %let _EFIREC_ = 0;     /* clear export record count macro variable */</div>
+<div class="log-line sas-log-source">576      file '/workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv' delimiter=',' DSD DROPOVER</div>
+<div class="log-line sas-log-source">576! lrecl=32767;</div>
+<div class="log-line sas-log-source">577      if _n_ = 1 then        /* write column names or labels */</div>
+<div class="log-line sas-log-source">578       do;</div>
+<div class="log-line sas-log-source">579         put</div>
+<div class="log-line sas-log-source">580            "ID"</div>
+<div class="log-line sas-log-source">581         ','</div>
+<div class="log-line sas-log-source">582            "LostCustomer"</div>
+<div class="log-line sas-log-source">583         ','</div>
+<div class="log-line sas-log-source">584            "regionPctCustomers"</div>
+<div class="log-line sas-log-source">585         ','</div>
+<div class="log-line sas-log-source">586            "numOfTotalReturns"</div>
+<div class="log-line sas-log-source">587         ','</div>
+<div class="log-line sas-log-source">588            "wksSinceLastPurch"</div>
+<div class="log-line sas-log-source">589         ','</div>
+<div class="log-line sas-log-source">590            "basktPurchCount12Month"</div>
+<div class="log-line sas-log-source">591         ','</div>
+<div class="log-line sas-log-source">592            "LastPurchaseAmount"</div>
+<div class="log-line sas-log-source">593         ','</div>
+<div class="log-line sas-log-source">594            "AvgPurchaseAmount12"</div>
+<div class="log-line sas-log-source">595         ','</div>
+<div class="log-line sas-log-source">596            "AvgPurchaseAmountTotal"</div>
+<div class="log-line sas-log-source">597         ','</div>
+<div class="log-line sas-log-source">598            "intAdExposureCount12"</div>
+<div class="log-line sas-log-source">599         ','</div>
+<div class="log-line sas-log-source">600            "intAdExposureCount36"</div>
+<div class="log-line sas-log-source">601         ','</div>
+<div class="log-line sas-log-source">602            "intAdExposureCountAll"</div>
+<div class="log-line sas-log-source">603         ','</div>
+<div class="log-line sas-log-source">604            "socialMediaAdCount12"</div>
+<div class="log-line sas-log-source">605         ','</div>
+<div class="log-line sas-log-source">606            "socialMediaAdCount36"</div>
+<div class="log-line sas-log-source">607         ','</div>
+<div class="log-line sas-log-source">608            "socialMediaAdCountAll"</div>
+<div class="log-line sas-log-source">609         ','</div>
+<div class="log-line sas-log-source">610            "totalNumProdPurchased"</div>
+<div class="log-line sas-log-source">611         ','</div>
+<div class="log-line sas-log-source">612            "custInitiatedContacts"</div>
+<div class="log-line sas-log-source">613         ','</div>
+<div class="log-line sas-log-source">614            "avgDiscountValue12"</div>
+<div class="log-line sas-log-source">615         ','</div>
+<div class="log-line sas-log-source">616            "customersales"</div>
+<div class="log-line sas-log-source">617         ','</div>
+<div class="log-line sas-log-source">618            "wksSinceFirstPurch"</div>
+<div class="log-line sas-log-source">619         ','</div>
+<div class="log-line sas-log-source">620            "customerGender"</div>
+<div class="log-line sas-log-title">24                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">621         ','</div>
+<div class="log-line sas-log-source">622            "EstimatedIncome"</div>
+<div class="log-line sas-log-source">623         ','</div>
+<div class="log-line sas-log-source">624            "regionMedHomeVal"</div>
+<div class="log-line sas-log-source">625         ','</div>
+<div class="log-line sas-log-source">626            "birthDate"</div>
+<div class="log-line sas-log-source">627         ','</div>
+<div class="log-line sas-log-source">628            "customerSubscrStat"</div>
+<div class="log-line sas-log-source">629         ','</div>
+<div class="log-line sas-log-source">630            "techSupportEval"</div>
+<div class="log-line sas-log-source">631         ','</div>
+<div class="log-line sas-log-source">632            "Review_Text"</div>
+<div class="log-line sas-log-source">633         ','</div>
+<div class="log-line sas-log-source">634            "Title"</div>
+<div class="log-line sas-log-source">635         ','</div>
+<div class="log-line sas-log-source">636            "customerAge"</div>
+<div class="log-line sas-log-source">637         ','</div>
+<div class="log-line sas-log-source">638            "DemHomeOwner"</div>
+<div class="log-line sas-log-source">639         ','</div>
+<div class="log-line sas-log-source">640            "AvgPurchasePerAd12"</div>
+<div class="log-line sas-log-source">641         ;</div>
+<div class="log-line sas-log-source">642       end;</div>
+<div class="log-line sas-log-source">643     set  CHURN2   end=EFIEOD;</div>
+<div class="log-line sas-log-source">644         format ID best12. ;</div>
+<div class="log-line sas-log-source">645         format LostCustomer best12. ;</div>
+<div class="log-line sas-log-source">646         format regionPctCustomers best12. ;</div>
+<div class="log-line sas-log-source">647         format numOfTotalReturns best12. ;</div>
+<div class="log-line sas-log-source">648         format wksSinceLastPurch best12. ;</div>
+<div class="log-line sas-log-source">649         format basktPurchCount12Month best12. ;</div>
+<div class="log-line sas-log-source">650         format LastPurchaseAmount best12. ;</div>
+<div class="log-line sas-log-source">651         format AvgPurchaseAmount12 best12. ;</div>
+<div class="log-line sas-log-source">652         format AvgPurchaseAmountTotal best12. ;</div>
+<div class="log-line sas-log-source">653         format intAdExposureCount12 best12. ;</div>
+<div class="log-line sas-log-source">654         format intAdExposureCount36 best12. ;</div>
+<div class="log-line sas-log-source">655         format intAdExposureCountAll best12. ;</div>
+<div class="log-line sas-log-source">656         format socialMediaAdCount12 best12. ;</div>
+<div class="log-line sas-log-source">657         format socialMediaAdCount36 best12. ;</div>
+<div class="log-line sas-log-source">658         format socialMediaAdCountAll best12. ;</div>
+<div class="log-line sas-log-source">659         format totalNumProdPurchased best12. ;</div>
+<div class="log-line sas-log-source">660         format custInitiatedContacts best12. ;</div>
+<div class="log-line sas-log-source">661         format avgDiscountValue12 best12. ;</div>
+<div class="log-line sas-log-source">662         format customersales best12. ;</div>
+<div class="log-line sas-log-source">663         format wksSinceFirstPurch best12. ;</div>
+<div class="log-line sas-log-source">664         format customerGender $1. ;</div>
+<div class="log-line sas-log-source">665         format EstimatedIncome best12. ;</div>
+<div class="log-line sas-log-source">666         format regionMedHomeVal best12. ;</div>
+<div class="log-line sas-log-source">667         format birthDate date9. ;</div>
+<div class="log-line sas-log-source">668         format customerSubscrStat $8. ;</div>
+<div class="log-line sas-log-source">669         format techSupportEval best12. ;</div>
+<div class="log-line sas-log-source">670         format Review_Text $504. ;</div>
+<div class="log-line sas-log-source">671         format Title $50. ;</div>
+<div class="log-line sas-log-source">672         format customerAge best12. ;</div>
+<div class="log-line sas-log-source">673         format DemHomeOwner $demhomeowner9. ;</div>
+<div class="log-line sas-log-source">674         format AvgPurchasePerAd12 best12. ;</div>
+<div class="log-line sas-log-source">675       do;</div>
+<div class="log-line sas-log-source">676         EFIOUT + 1;</div>
+<div class="log-line sas-log-source">677         put ID @;</div>
+<div class="log-line sas-log-source">678         put LostCustomer @;</div>
+<div class="log-line sas-log-title">25                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-source">679         put regionPctCustomers @;</div>
+<div class="log-line sas-log-source">680         put numOfTotalReturns @;</div>
+<div class="log-line sas-log-source">681         put wksSinceLastPurch @;</div>
+<div class="log-line sas-log-source">682         put basktPurchCount12Month @;</div>
+<div class="log-line sas-log-source">683         put LastPurchaseAmount @;</div>
+<div class="log-line sas-log-source">684         put AvgPurchaseAmount12 @;</div>
+<div class="log-line sas-log-source">685         put AvgPurchaseAmountTotal @;</div>
+<div class="log-line sas-log-source">686         put intAdExposureCount12 @;</div>
+<div class="log-line sas-log-source">687         put intAdExposureCount36 @;</div>
+<div class="log-line sas-log-source">688         put intAdExposureCountAll @;</div>
+<div class="log-line sas-log-source">689         put socialMediaAdCount12 @;</div>
+<div class="log-line sas-log-source">690         put socialMediaAdCount36 @;</div>
+<div class="log-line sas-log-source">691         put socialMediaAdCountAll @;</div>
+<div class="log-line sas-log-source">692         put totalNumProdPurchased @;</div>
+<div class="log-line sas-log-source">693         put custInitiatedContacts @;</div>
+<div class="log-line sas-log-source">694         put avgDiscountValue12 @;</div>
+<div class="log-line sas-log-source">695         put customersales @;</div>
+<div class="log-line sas-log-source">696         put wksSinceFirstPurch @;</div>
+<div class="log-line sas-log-source">697         put customerGender $ @;</div>
+<div class="log-line sas-log-source">698         put EstimatedIncome @;</div>
+<div class="log-line sas-log-source">699         put regionMedHomeVal @;</div>
+<div class="log-line sas-log-source">700         put birthDate @;</div>
+<div class="log-line sas-log-source">701         put customerSubscrStat $ @;</div>
+<div class="log-line sas-log-source">702         put techSupportEval @;</div>
+<div class="log-line sas-log-source">703         put Review_Text $ @;</div>
+<div class="log-line sas-log-source">704         put Title $ @;</div>
+<div class="log-line sas-log-source">705         put customerAge @;</div>
+<div class="log-line sas-log-source">706         put DemHomeOwner $ @;</div>
+<div class="log-line sas-log-source">707         put AvgPurchasePerAd12 ;</div>
+<div class="log-line sas-log-source">708         ;</div>
+<div class="log-line sas-log-source">709       end;</div>
+<div class="log-line sas-log-source">710      if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */</div>
+<div class="log-line sas-log-source">711      if EFIEOD then call symputx('_EFIREC_',EFIOUT);</div>
+<div class="log-line sas-log-source">712      run;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: The file '/workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv' is:</div>
+<div class="log-line sas-log-note">      Filename=/workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv,</div>
+<div class="log-line sas-log-note">      Owner Name=sas,Group Name=sas,</div>
+<div class="log-line sas-log-note">      Access Permission=-rw-r--r--,</div>
+<div class="log-line sas-log-note">      Last Modified=03Oct2025:18:52:32</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: 5001 records were written to the file '/workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv'.</div>
+<div class="log-line sas-log-note">      The minimum record length was 85.</div>
+<div class="log-line sas-log-note">      The maximum record length was 679.</div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set WORK.CHURN2.</div>
+<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.04 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.04 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-normal">5000 records created in /workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv from CHURN2.</div>
+<div class="log-line sas-log-normal">  </div>
+<div class="log-line sas-log-normal">  </div>
+<div class="log-line sas-log-note">NOTE: "/workspaces/churnproject/sas-education/sas1/data/output/customer_churn_abt.csv" file was successfully created.</div>
+<div class="log-line sas-log-note">NOTE: PROCEDURE EXPORT used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.07 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.08 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-title">26                                                         The SAS System                       Friday, October  3, 2025 06:45:00 PM</div>
+<div class="log-line sas-log-title"></div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">713  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">714  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+<div class="markdown-cell">
+<h3>Export to Snowflake (if applicable)</h3>
+<p>If we had Snowflake and wanted to save a table in it, we simply change the target library name (cust).</p>
+<pre><code class="language-sas">/* Create a Snowflake table Example */
+data cust.customer_churn_abt ;
+    set churn2 ;
+run ;
+</code></pre>
+
+</div>
+<div class="markdown-cell">
+<h3>Export to Google Cloud Storage (if applicable)</h3>
+<p>If we had GCS and wanted to save a table in it as a Parquet data set, we simply change the target library name (gcs).</p>
+<pre><code class="language-sas">/* Create a Parquet file on GCS Example */
+data gcs.customer_churn_abt ;
+    set churn2 ;
+run ;
+</code></pre>
+
+</div>
+<div class="markdown-cell">
+<h2>Reset the target table</h2>
+<p>Since we have done some append tests, we need to reload the table as it originally was.</p>
+
+</div>
+<div class="code-cell">
+<pre><code class="hljs"><span class="sas-syntax-comment">/* Because we illustrated APPEND, we need to reset the target table so that we have the expected 5000 rows */</span>
+<span class="sas-syntax-sec-keyword">data</span> churn.customer_churn_abt <span class="sas-syntax-sep">;</span>
+    <span class="sas-syntax-keyword">set</span> churn2 <span class="sas-syntax-sep">;</span>
+<span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
+<div class="languageId">sas</div>
+</div>
+<div class="cell-output">
+<div class="log-line sas-log-source">715  /** LOG_START_INDICATOR **/</div>
+<div class="log-line sas-log-source">716  title;footnote;ods _all_ close;</div>
+<div class="log-line sas-log-source">717  ods graphics on;</div>
+<div class="log-line sas-log-source">718  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
+<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml51.htm</div>
+<div class="log-line sas-log-source">719  %let _SASPROGRAMFILE =</div>
+<div class="log-line sas-log-source">719! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/02_Data_Engineerin</div>
+<div class="log-line sas-log-source">719! g/03_Saving_the_Final_Dataset.sasnb));</div>
+<div class="log-line sas-log-source">720  /* Because we illustrated APPEND, we need to reset the target table so that we have the expected 5000 rows */</div>
+<div class="log-line sas-log-source">721  data churn.customer_churn_abt ;</div>
+<div class="log-line sas-log-source">722      set churn2 ;</div>
+<div class="log-line sas-log-source">723  run ;</div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-note">NOTE: There were 5000 observations read from the data set WORK.CHURN2.</div>
+<div class="log-line sas-log-note">NOTE: The data set CHURN.CUSTOMER_CHURN_ABT has 5000 observations and 31 variables.</div>
+<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
+<div class="log-line sas-log-note">      real time           0.00 seconds</div>
+<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
+<div class="log-line sas-log-note">      </div>
+<div class="log-line sas-log-note"></div>
+<div class="log-line sas-log-source">724  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
+<div class="log-line sas-log-source">725  </div>
+<div class="log-line sas-log-note"></div>
+</div>
+
+
+  </body>
+</html>
