@@ -43,118 +43,113 @@
         margin-inline-start: 1em;
       }
       body {
-  background-color: #03233a;
-  color: #cccccc;
+  color: #3b3b3b;
   --border-color: #b0b7bb;
-  --highlight-background-color: #9fb6c633;
-}
-.markdown-cell a:link {
-  color: #3794ff;
+  --highlight-background-color: #818b981f;
 }
 .hljs {
-  background: #021727;
-  color: #dddfe4;
+  background: #fff;
 }
 
 /* Syntax highlighting */
 .hljs-operator,
 .hljs-punctuation {
-  color: #dddfe4;
+  color: #1b1d22;
 }
 
 .hljs-keyword {
-  color: #4398f9;
+  color: #3578c5;
 }
 
 .hljs-comment {
-  color: #97c03f;
+  color: #647f29;
 }
 
 .hljs-string {
-  color: #f17e70;
+  color: #8f4238;
 }
 
 .hljs-number {
-  color: #54b6a4;
+  color: #3c8275;
 }
 
 .hljs-title {
-  color: #92c3fc;
+  color: #224c7c;
   font-weight: bold;
 }
 
 .hljs-built_in {
-  color: #faaa6b;
+  color: #aa0d91;
 }
 
 /* SAS Syntax */
 .sas-syntax-sep {
-  color: #dddfe4;
+  color: #1b1d22;
 }
 
 .sas-syntax-keyword,
 .sas-syntax-macro-keyword {
-  color: #4398f9;
+  color: #3578c5;
 }
 
 .sas-syntax-sec-keyword,
 .sas-syntax-proc-name {
-  color: #92c3fc;
+  color: #224c7c;
   font-weight: bold;
 }
 
 .sas-syntax-comment,
 .sas-syntax-macro-comment {
-  color: #97c03f;
+  color: #647f29;
 }
 
 .sas-syntax-macro-ref,
 .sas-syntax-macro-sec-keyword {
-  color: #dddfe4;
+  color: #1b1d22;
   font-weight: bold;
 }
 
 .sas-syntax-cards-data {
-  color: #faaa6b;
+  color: #ad6531;
 }
 
 .sas-syntax-string {
-  color: #f17e70;
+  color: #8f4238;
 }
 
 .sas-syntax-date,
 .sas-syntax-time,
 .sas-syntax-dt,
 .sas-syntax-bitmask {
-  color: #54b6a4;
+  color: #3c8275;
   font-weight: bold;
 }
 
 .sas-syntax-namelit {
-  color: #f17e70;
+  color: #8f4238;
   font-weight: bold;
 }
 
 .sas-syntax-hex,
 .sas-syntax-numeric {
-  color: #54b6a4;
+  color: #3c8275;
   font-weight: bold;
 }
 
 .sas-syntax-format {
-  color: #54b6a4;
+  color: #3c8275;
 }
 
 .log-line.sas-log-error {
-  color: #ff4d4d;
+  color: #ff0000;
 }
 
 .log-line.sas-log-warning {
-  color: #ffb829;
+  color: #8f5f00;
 }
 
 .log-line.sas-log-note {
-  color: #2fa8fe;
+  color: #0000ff;
 }
 
     </style>
@@ -197,32 +192,6 @@ run;
 <span class="sas-syntax-sec-keyword">run</span><span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
 </div>
-<div class="cell-output">
-<div class="log-line sas-log-source">1754  /** LOG_START_INDICATOR **/</div>
-<div class="log-line sas-log-source">1755  title;footnote;ods _all_ close;</div>
-<div class="log-line sas-log-source">1756  ods graphics on;</div>
-<div class="log-line sas-log-source">1757  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
-<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml79.htm</div>
-<div class="log-line sas-log-source">1758  %let _SASPROGRAMFILE =</div>
-<div class="log-line sas-log-source">1758! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
-<div class="log-line sas-log-source">1758! g_the_Model/01_Deploying_the_Model.sasnb));</div>
-<div class="log-line sas-log-source">1759  title2 'Score data with a %include statement referencing SAS Data Step code from proc logselect';</div>
-<div class="log-line sas-log-source">1760  data log_scored ;</div>
-<div class="log-line sas-log-source">1761     set churn.customer_churn_ml_test_final;</div>
-<div class="log-line sas-log-source">1762     %include "&path/code/logscore.sas";</div>
-<div class="log-line sas-log-source">1918   run;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set CHURN.CUSTOMER_CHURN_ML_TEST_FINAL.</div>
-<div class="log-line sas-log-note">NOTE: The data set WORK.LOG_SCORED has 1499 observations and 32 variables.</div>
-<div class="log-line sas-log-note">NOTE: DATA statement used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.00 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1919   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
-<div class="log-line sas-log-source">1920   </div>
-<div class="log-line sas-log-note"></div>
-</div>
 
 <div class="markdown-cell">
 <h3>Print a few observations with the scores</h3>
@@ -236,42 +205,6 @@ run;
     <span class="sas-syntax-keyword">var</span> ID customerGender customerSubscrStat DemHomeOwner I_LostCustomer P_LostCustomer <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
-</div>
-<div class="cell-output">
-<div class="log-line sas-log-source">1921   /** LOG_START_INDICATOR **/</div>
-<div class="log-line sas-log-source">1922   title;footnote;ods _all_ close;</div>
-<div class="log-line sas-log-source">1923   ods graphics on;</div>
-<div class="log-line sas-log-source">1924   ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
-<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml80.htm</div>
-<div class="log-line sas-log-source">1925   %let _SASPROGRAMFILE =</div>
-<div class="log-line sas-log-source">1925 ! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizi</div>
-<div class="log-line sas-log-source">1925 ! ng_the_Model/01_Deploying_the_Model.sasnb));</div>
-<div class="log-line sas-log-source">1926   proc sort data=log_scored ;</div>
-<div class="log-line sas-log-source">1927       by descending P_LostCustomer ;</div>
-<div class="log-line sas-log-source">1928   run ;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set WORK.LOG_SCORED.</div>
-<div class="log-line sas-log-note">NOTE: The data set WORK.LOG_SCORED has 1499 observations and 32 variables.</div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE SORT used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.00 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1929   proc print data=log_scored (obs=10) ;</div>
-<div class="log-line sas-log-source">1930       var ID customerGender customerSubscrStat DemHomeOwner I_LostCustomer P_LostCustomer ;</div>
-<div class="log-line sas-log-source">1931   run ;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set WORK.LOG_SCORED.</div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.01 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-title">59                                                         The SAS System                       Friday, October 17, 2025 05:02:00 PM</div>
-<div class="log-line sas-log-title"></div>
-<div class="log-line sas-log-source">1932   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
-<div class="log-line sas-log-source">1933   </div>
-<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -1562,31 +1495,6 @@ run;
 <div class="languageId">sas</div>
 </div>
 <div class="cell-output">
-<div class="log-line sas-log-source">1934   /** LOG_START_INDICATOR **/</div>
-<div class="log-line sas-log-source">1935   title;footnote;ods _all_ close;</div>
-<div class="log-line sas-log-source">1936   ods graphics on;</div>
-<div class="log-line sas-log-source">1937   ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
-<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml81.htm</div>
-<div class="log-line sas-log-source">1938   %let _SASPROGRAMFILE =</div>
-<div class="log-line sas-log-source">1938 ! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizi</div>
-<div class="log-line sas-log-source">1938 ! ng_the_Model/01_Deploying_the_Model.sasnb));</div>
-<div class="log-line sas-log-source">1939   title2 'ASTORE describe and scoring';</div>
-<div class="log-line sas-log-source">1940   proc astore;</div>
-<div class="log-line sas-log-source">1941       score data=churn.customer_churn_ml_test_final rstore=gbstore</div>
-<div class="log-line sas-log-source">1942             out=grad_scored copyvars=(&char_vars ID );</div>
-<div class="log-line sas-log-note">NOTE: The data set WORK.GRAD_SCORED has 1499 observations and 8 variables.</div>
-<div class="log-line sas-log-source">1943   run;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE ASTORE used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.09 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.09 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1944   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
-<div class="log-line sas-log-source">1945   </div>
-<div class="log-line sas-log-note"></div>
-</div>
-<div class="cell-output">
 <style>
 /*<![CDATA[*/
 .body.c > table, .body.c > pre, .body.c div > table,
@@ -2820,39 +2728,6 @@ a:visited { color: #800080 }
 <span class="sas-syntax-sec-keyword">proc</span> <span class="sas-syntax-proc-name">print</span> <span class="sas-syntax-keyword">data</span><span class="sas-syntax-sep">=</span>grad_scored <span class="sas-syntax-sep">(</span><span class="sas-syntax-keyword">obs</span><span class="sas-syntax-sep">=</span><span class="sas-syntax-numeric">10</span><span class="sas-syntax-sep">)</span> <span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span> <span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
-</div>
-<div class="cell-output">
-<div class="log-line sas-log-source">1946   /** LOG_START_INDICATOR **/</div>
-<div class="log-line sas-log-source">1947   title;footnote;ods _all_ close;</div>
-<div class="log-line sas-log-source">1948   ods graphics on;</div>
-<div class="log-line sas-log-source">1949   ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
-<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml82.htm</div>
-<div class="log-line sas-log-source">1950   %let _SASPROGRAMFILE =</div>
-<div class="log-line sas-log-source">1950 ! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizi</div>
-<div class="log-line sas-log-source">1950 ! ng_the_Model/01_Deploying_the_Model.sasnb));</div>
-<div class="log-line sas-log-source">1951   proc sort data=grad_scored ;</div>
-<div class="log-line sas-log-source">1952       by descending P_LostCustomer1 ;</div>
-<div class="log-line sas-log-source">1953   run ;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: There were 1499 observations read from the data set WORK.GRAD_SCORED.</div>
-<div class="log-line sas-log-note">NOTE: The data set WORK.GRAD_SCORED has 1499 observations and 8 variables.</div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE SORT used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.00 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.00 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1954   proc print data=grad_scored (obs=10) ;</div>
-<div class="log-line sas-log-source">1955   run ;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: There were 10 observations read from the data set WORK.GRAD_SCORED.</div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE PRINT used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.01 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.02 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1956   ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
-<div class="log-line sas-log-source">1957   </div>
-<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
@@ -4229,68 +4104,6 @@ eyJqa3JkA...kbbp2fJnHw
    <span class="sas-syntax-keyword">assessment</span><span class="sas-syntax-sep">;</span>
 <span class="sas-syntax-sec-keyword">run</span><span class="sas-syntax-sep">;</span></code></pre>
 <div class="languageId">sas</div>
-</div>
-<div class="cell-output">
-<div class="log-line sas-log-source">1719  /** LOG_START_INDICATOR **/</div>
-<div class="log-line sas-log-source">1720  title;footnote;ods _all_ close;</div>
-<div class="log-line sas-log-source">1721  ods graphics on;</div>
-<div class="log-line sas-log-source">1722  ods html5(id=vscode) style=HTMLEncore options(bitmap_mode='inline' svg_mode='inline');</div>
-<div class="log-line sas-log-note">NOTE: Writing HTML5(VSCODE) Body file: sashtml78.htm</div>
-<div class="log-line sas-log-source">1723  %let _SASPROGRAMFILE =</div>
-<div class="log-line sas-log-source">1723! %nrquote(%nrstr(/workspaces/churnproject/sas-education/sas1/03_Addressing_the_Use_Case_with_the_SAS_Language/04_Productionizin</div>
-<div class="log-line sas-log-source">1723! g_the_Model/01_Deploying_the_Model.sasnb));</div>
-<div class="log-line sas-log-source">1724 /* Download the astore file for proc registermodel to access */</div>
-<div class="log-line sas-log-source">1725  proc astore;</div>
-<div class="log-line sas-log-source">1726     download rstore = work.gbstore</div>
-<div class="log-line sas-log-source">1727              store = "gbstore.sasast";</div>
-<div class="log-line sas-log-note">NOTE: 221291 bytes were downloaded from the table "GBSTORE".</div>
-<div class="log-line sas-log-note">NOTE: The analytic store file was saved in "gbstore.sasast".</div>
-<div class="log-line sas-log-source">1728  run;</div>
-<div class="log-line sas-log-title">57                                                         The SAS System                       Friday, October 17, 2025 05:02:00 PM</div>
-<div class="log-line sas-log-title"></div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE ASTORE used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           0.00 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.01 seconds</div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1729  </div>
-<div class="log-line sas-log-source">1730  /* Paste your SAS Viya token obtained in previous step */</div>
-<div class="log-line sas-log-source">1731  </div>
-<div class="log-line sas-log-source">1732  %macro myTokenName() / secure;</div>
-<div class="log-line sas-log-source">1733  "Bearer</div>
-<div class="log-line sas-log-source">1733! eyJqa3JkA...</div>
-<div class="log-line sas-log-source">1733! ...kbbp2fJnHw"</div>
-<div class="log-line sas-log-note">NOTE: The quoted string currently being processed has become more than 262 bytes long.  You might have unbalanced quotation marks.</div>
-<div class="log-line sas-log-source">1734  %mend;</div>
-<div class="log-line sas-log-source">1735  </div>
-<div class="log-line sas-log-source">1736  /* Enter your SAS Viya URL for server */</div>
-<div class="log-line sas-log-source">1737  /* A new Model Manager project called myProject with the gradient boosting model is created in SAS Viya */ </div>
-<div class="log-line sas-log-source">1738  proc registermodel</div>
-<div class="log-line sas-log-source">1739        name = "gbAstore"</div>
-<div class="log-line sas-log-source">1740        description = "GradBoost Astore Model"</div>
-<div class="log-line sas-log-source">1741        data = work.CUSTOMER_CHURN_ML_TRAIN_FINAL</div>
-<div class="log-line sas-log-source">1742        algorithm = GRADBOOST</div>
-<div class="log-line sas-log-source">1743        function = CLASSIFICATION</div>
-<div class="log-line sas-log-source">1744        server = "https://my.sas.viya.example.com"</div>
-<div class="log-line sas-log-source">1745        oauthtoken = "myTokenName"</div>
-<div class="log-line sas-log-source">1746        replace;</div>
-<div class="log-line sas-log-source">1747     project name="myProject" folder="myFolder";</div>
-<div class="log-line sas-log-source">1748     astoremodel store = "gbstore.sasast";</div>
-<div class="log-line sas-log-source">1749     target LostCustomer / level=binary event="1";</div>
-<div class="log-line sas-log-source">1750     assessment;</div>
-<div class="log-line sas-log-source">1751  run;</div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-note">NOTE: PROCEDURE REGISTERMODEL used (Total process time):</div>
-<div class="log-line sas-log-note">      real time           18.72 seconds</div>
-<div class="log-line sas-log-note">      cpu time            0.47 seconds</div>
-<div class="log-line sas-log-title">58                                                         The SAS System                       Friday, October 17, 2025 05:02:00 PM</div>
-<div class="log-line sas-log-title"></div>
-<div class="log-line sas-log-note">      </div>
-<div class="log-line sas-log-note"></div>
-<div class="log-line sas-log-source">1752  ;*';*";*/;run;quit;ods html5(id=vscode) close;</div>
-<div class="log-line sas-log-source">1753  </div>
-<div class="log-line sas-log-note"></div>
 </div>
 <div class="cell-output">
 <style>
