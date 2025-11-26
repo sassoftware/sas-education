@@ -1,4 +1,4 @@
-# Modern Data Science with SAS Viya Workbench and Python
+# Modern Data Science with SAS Viya Workbench: Unified Development with SAS, Python, and R
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ I hope that you’re as excited as I am… so let’s get started! ​
 
 ## Course
 
-The materials provided in this project are in support of the **Modern Data Science with SAS Viya Workbench and Python** course available on https://learn.sas.com/.
+The materials provided in this project are in support of the **Modern Data Science with SAS Viya Workbench: Unified Development with SAS, Python, and R** course available on https://learn.sas.com/.
 
 ## View the Materials
 
@@ -26,10 +26,4 @@ Indeed, SAS notebooks (https://sassoftware.github.io/vscode-sas-extension/Featur
 
 ## Installation
 
-You can clone the ```sas-education``` repository using the command-line:
-
-```
-git clone https://github.com/sassoftware/sas-education.git
-```
-
-Then, you can access the available notebooks from this course in the ```sas1``` sub-folder and run them in your environment.
+You can clone this repository and run the available notebooks in your environment.

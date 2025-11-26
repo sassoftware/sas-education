@@ -1,6 +1,6 @@
    /*---------------------------------------------------------
      Generated SAS Scoring Code
-     Date: 01Oct2024:18:56:04
+     Date: 03Oct2025:19:26:17
      -------------------------------------------------------*/
 
    drop _badval_ _linp_ _temp_ _i_ _j_;
@@ -21,14 +21,14 @@
           -0.10774577250347
            0.20507436073752
           -0.07665987988392
-           0.20518207462435
+           0.20518207462436
            0.34581932445578
            0.12612974099135
             -0.223184629716
           -0.15079563607906
            0.18115438681628
           -0.77264768752944
-           0.14866102228103);
+           0.14866102228104);
    array _xtmp_0_0_{24} _temporary_;
    array _xcomp_0_0_{24} _temporary_;
    array _xclas_0_0_{24} _temporary_;
@@ -37,8 +37,8 @@
    _customerSubscrStat_ = left(trim(put(customerSubscrStat,$8.)));
    length _DemHomeOwner_ $9; drop _DemHomeOwner_;
    _DemHomeOwner_ = left(trim(put(DemHomeOwner,$DEMHOMEOWNER.)));
-   length _customerGender_ $3; drop _customerGender_;
-   _customerGender_ = left(trim(put(customerGender,$3.)));
+   length _customerGender_ $1; drop _customerGender_;
+   _customerGender_ = left(trim(put(customerGender,$1.)));
    if missing(regionPctCustomers)
       or missing(regionMedHomeVal)
       or missing(log_AvgPurchaseAmountTotal)
