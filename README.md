@@ -21,7 +21,9 @@ Consider using a table of contents to make lengthy and complex README files easi
 # SAS Education
 
 ## Overview
-This reppository contains a collection of hands-on instructions, examples, data, and tutorials provided by SAS Education to support your SAS training journey.
+This repository contains a collection of hands-on instructions, examples, data, and tutorials provided by SAS Education to support your SAS training journey.
+
+The Articles folders contains material that is referenced in articles published by the SAS Education team.
 
 ## Installation
 <!--
@@ -43,7 +45,7 @@ This is a good place to include screenshots, [asciinema](https://asciinema.org/)
 
 ### Examples
 <!--
-Provide additional examples of using the software, or point to further documentation. 
+Provide additional examples of using the software, or point to further documentation.
 Make learning and using your project as easy as possible!
 -->
 
