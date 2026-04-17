@@ -10,11 +10,11 @@ The dashboard has been provide as a sample and to provide a Quick Start for moni
 
 The following image shows the status overview, showing the running models and decisions.
 
-![status-summary](/articles/Observability/images/status-summary.png)
+![status-summary](/articles/Observability/images/scr-status-summary.png)
 
 ## SAS Communities Articles
 
-See the following Communities blogs:
+See the following Communities posts:
 
 * <a href="https://communities.sas.com/t5/SAS-Communities-Library/SAS-Container-Runtime-Observability/ta-p/984344" target="_blank">SAS Container Runtime Observability Part 1</a>
 * SAS Container Runtime Observability Part 2
