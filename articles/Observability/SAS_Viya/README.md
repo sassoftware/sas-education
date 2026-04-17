@@ -6,7 +6,7 @@ The dashboard examples provided here are additional to the dashboards provided b
 
 ## SAS Viya Overview Dashboard
 
-The SAS Viya Overview dashboard (`sas-viya-overview.json`) has been developed to provide summary view of the SAS Viya deployments.
+The SAS Viya Overview dashboard (`sas-viya-overview.json`) has been developed to provide summary views of the SAS Viya deployments, focusing on several key administration and deployment metrics.
 
 The following images are from monitoring a SAS Viya deployment starting. The first image shows the "prod" deployment starting.
 
