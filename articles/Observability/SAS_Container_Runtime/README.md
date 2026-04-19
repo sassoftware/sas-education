@@ -16,7 +16,7 @@ The following image shows the status overview, showing the running models and de
 
 See the following Communities posts:
 
-* <a href="https://communities.sas.com/t5/SAS-Communities-Library/SAS-Container-Runtime-Observability/ta-p/984344" target="_blank">SAS Container Runtime Observability Part 1</a>
+* [SAS Container Runtime Observability Part 1](https://communities.sas.com/t5/SAS-Communities-Library/SAS-Container-Runtime-Observability/ta-p/984344)
 * SAS Container Runtime Observability Part 2
 
     Part 2 and the Grafana dashboard example will be available shortly.

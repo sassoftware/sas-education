@@ -2,7 +2,7 @@
 
 This content relates to observability for SAS Viya.
 
-The dashboard examples provided here are additional to the dashboards provided by the <a href="https://github.com/sassoftware/viya4-monitoring-kubernetes" target="_blank">SAS Viya Monitoring for Kubernetes</a> GitHub project. It is not intended to replace this functionality.
+The dashboard examples provided here are additional to the dashboards provided by the [SAS Viya Monitoring for Kubernetes](https://github.com/sassoftware/viya4-monitoring-kubernetes) GitHub project. It is not intended to replace this functionality.
 
 ## SAS Viya Overview Dashboard
 
