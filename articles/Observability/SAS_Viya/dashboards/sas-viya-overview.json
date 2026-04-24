@@ -2147,8 +2147,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "viyaorch",
-          "value": "viyaorch"
+          "text": " ",
+          "value": " "
         },
         "datasource": {
           "type": "prometheus",
@@ -2205,8 +2205,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "cas-shared-default",
-          "value": "cas-shared-default"
+          "text": " ",
+          "value": " "
         },
         "datasource": {
           "type": "prometheus",
