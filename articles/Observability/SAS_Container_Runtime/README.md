@@ -34,6 +34,5 @@ The **Node View** reporting assumes any nodes dedicated to running the SAS Conta
 See the following Communities posts:
 
 * [SAS Container Runtime Observability Part 1](https://communities.sas.com/t5/SAS-Communities-Library/SAS-Container-Runtime-Observability/ta-p/984344)
-* SAS Container Runtime Observability Part 2
+* [SAS Container Runtime Observability Part 2](https://communities.sas.com/t5/SAS-Communities-Library/SAS-Container-Runtime-Observability-Part-2/ta-p/986858)
 
-    Part 2 and the Grafana dashboard example will be available shortly.
