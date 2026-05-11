@@ -189,7 +189,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 6,
+        "w": 5,
         "x": 0,
         "y": 3
       },
@@ -313,8 +313,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 10,
-        "x": 7,
+        "w": 7,
+        "x": 5,
         "y": 3
       },
       "hideTimeOverride": false,
@@ -323,7 +323,7 @@
         "colWidth": 0.9,
         "legend": {
           "displayMode": "list",
-          "placement": "right",
+          "placement": "bottom",
           "showLegend": true
         },
         "rowHeight": 0.9,
@@ -356,6 +356,114 @@
       "title": "Platform Readiness",
       "transparent": true,
       "type": "status-history"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "No data",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 12,
+        "y": 3
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "text": {
+          "titleSize": 15,
+          "valueSize": 15
+        },
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "kube_namespace_labels{namespace=\"$namespace\"}",
+          "format": "time_series",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "SAS Viya Cadence Information",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "keepLabels": [
+              "label_sas_cadence_name",
+              "label_sas_cadence_release",
+              "label_sas_cadence_version"
+            ],
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "kube_namespace_labels": true,
+              "{__name__=\"kube_namespace_labels\", container=\"kube-state-metrics\", endpoint=\"http\", instance=\"10.244.0.25:8080\", job=\"kube-state-metrics\", label_app=\"sas-viya\", label_environment=\"track-a\", label_kubernetes_io_metadata_name=\"test\", label_sas_cadence_name=\"Stable\", label_sas_cadence_release=\"20260506.1778038728310\", label_sas_cadence_version=\"2026.03\", namespace=\"test\", pod=\"v4m-kube-state-metrics-5b7dffc546-s6rkn\", service=\"v4m-kube-state-metrics\"}": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time": 0,
+              "label_sas_cadence_name": 2,
+              "label_sas_cadence_release": 4,
+              "label_sas_cadence_version": 3,
+              "{__name__=\"kube_namespace_labels\", container=\"kube-state-metrics\", endpoint=\"http\", instance=\"10.244.0.25:8080\", job=\"kube-state-metrics\", label_app=\"sas-viya\", label_environment=\"track-a\", label_kubernetes_io_metadata_name=\"test\", label_sas_cadence_name=\"Stable\", label_sas_cadence_release=\"20260506.1778038728310\", label_sas_cadence_version=\"2026.03\", namespace=\"test\", pod=\"v4m-kube-state-metrics-5b7dffc546-s6rkn\", service=\"v4m-kube-state-metrics\"}": 1
+            },
+            "renameByName": {
+              "label_sas_cadence_name": "Cadence Name:",
+              "label_sas_cadence_release": "Release:",
+              "label_sas_cadence_version": "Version:"
+            }
+          }
+        }
+      ],
+      "type": "stat"
     },
     {
       "fieldConfig": {
@@ -2147,8 +2255,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": " ",
-          "value": " "
+          "text": "",
+          "value": ""
         },
         "datasource": {
           "type": "prometheus",
@@ -2205,8 +2313,8 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": " ",
-          "value": " "
+          "text": "cas-shared-default",
+          "value": "cas-shared-default"
         },
         "datasource": {
           "type": "prometheus",
@@ -2235,5 +2343,5 @@
   "timezone": "browser",
   "title": "SAS Viya Summary",
   "uid": "adxp76x",
-  "version": 1
+  "version": 2
 }
