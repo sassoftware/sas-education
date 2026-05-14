@@ -60,4 +60,6 @@ While the dashboard can be used with any Grafana/Prometheus deployment, the CAS 
 
 ## SAS Communities Articles
 
-A Communities post will be available shortly. This provides more details on the dashboard.
+See the following Communities post:
+
+* [Building a Grafana dashboard to monitor SAS Viya](https://communities.sas.com/t5/SAS-Communities-Library/Building-a-Grafana-dashboard-to-monitor-SAS-Viya/ta-p/987954)
